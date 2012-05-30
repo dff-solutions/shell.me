@@ -61,10 +61,12 @@ namespace ShellMe.Console.CommandHandling
 
             var splittedArg = tempArg.Split('=');
 
+            Func<string, string> saveTrim = str => !string.IsNullOrEmpty(str) ? str.Trim() : str;
+
             return new CommandArgument()
                        {
-                           Name = splittedArg.Length == 0 ? tempArg.Trim() : splittedArg[0].Trim(),
-                           Value = splittedArg.Length == 2 ? splittedArg[1].Trim() : null
+                           Name = saveTrim(splittedArg.Length == 0 ? tempArg : splittedArg[0]),
+                           Value = saveTrim(splittedArg.Length == 2 ? splittedArg[1] : null)
                        };
         }
     }
