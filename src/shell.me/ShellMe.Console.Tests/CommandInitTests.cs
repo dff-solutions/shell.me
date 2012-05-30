@@ -35,6 +35,17 @@ namespace ShellMe.Console.Tests
         }
 
         [Test]
+        public void InterpretsBooleanFalseExpression()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--test", "--IsTest = false" });
+
+            Assert.AreEqual("Run", console.OutputQueue[0]);
+        }
+
+        [Test]
         public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
             var console = new TestConsole(new List<string>() { "--test --interactive", "--test" });

@@ -13,14 +13,15 @@ namespace ShellMe.Console.CommandHandling
 
     public class CommandPropertyWalker : ICommandPropertyWalker
     {
-        public Dictionary<string, Func<string, object>> TypeProviders { get; private set; } 
+        public Dictionary<string, Func<CommandArgument, object>> TypeProviders { get; private set; } 
 
         public CommandPropertyWalker()
         {
-            TypeProviders = new Dictionary<string, Func<string, object>>();
+            TypeProviders = new Dictionary<string, Func<CommandArgument, object>>();
             
-            //Todo This does not deal with the case where someone actually says --foo=false
-            TypeProviders.Add("System.Boolean", arg => !string.IsNullOrEmpty(arg));
+            TypeProviders.Add("System.Boolean", arg => arg.Value == null 
+                || arg.Value.Equals("true", StringComparison.OrdinalIgnoreCase)
+                || arg.Value.Equals("1", StringComparison.OrdinalIgnoreCase));
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
@@ -49,11 +50,22 @@ namespace ShellMe.Console.CommandHandling
             return arguments.Select(arg => arg.Trim()).Contains("--" + argument);
         }
 
-        private string GetArgument(IEnumerable<string> arguments, string argument)
+        private CommandArgument GetArgument(IEnumerable<string> arguments, string argument)
         {
-            return arguments
+            var tempArg = arguments
                     .Select(arg => arg.Trim())
-                    .FirstOrDefault(arg => arg.Equals("--" + argument, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(arg => arg.StartsWith("--" + argument, StringComparison.OrdinalIgnoreCase));
+
+            if (tempArg == null)
+                return null;
+
+            var splittedArg = tempArg.Split('=');
+
+            return new CommandArgument()
+                       {
+                           Name = splittedArg.Length == 0 ? tempArg.Trim() : splittedArg[0].Trim(),
+                           Value = splittedArg.Length == 2 ? splittedArg[1].Trim() : null
+                       };
         }
     }
 }
