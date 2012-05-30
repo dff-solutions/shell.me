@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ShellMe.Console.Configuration;
 
-namespace ShellMe.Console.Configuration
+namespace ShellMe.Console.CommandHandling
 {
     public class CommandFactory
     {

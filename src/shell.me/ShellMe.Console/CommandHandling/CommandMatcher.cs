@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ShellMe.Console.Configuration
+namespace ShellMe.Console.CommandHandling
 {
     public class CommandMatcher
     {

@@ -44,25 +44,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLoop.cs" />
-    <Compile Include="Configuration\CommandMatcher.cs" />
-    <Compile Include="Configuration\BaseCommand.cs" />
-    <Compile Include="Configuration\BaseCommandConfiguration.cs" />
-    <Compile Include="Configuration\CommandExtensions.cs" />
-    <Compile Include="Configuration\CommandFactory.cs" />
-    <Compile Include="Configuration\ICommand.cs" />
-    <Compile Include="Configuration\ICommandBundle.cs" />
-    <Compile Include="Configuration\IProcessor.cs" />
-    <Compile Include="Configuration\CommandPropertyWalker.cs" />
-    <Compile Include="Configuration\Setup.cs" />
-    <Compile Include="Configuration\SetupProvider.cs" />
+    <Compile Include="CommandHandling\CommandMatcher.cs" />
+    <Compile Include="CommandHandling\BaseCommand.cs" />
+    <Compile Include="CommandHandling\CommandExtensions.cs" />
+    <Compile Include="CommandHandling\CommandFactory.cs" />
+    <Compile Include="CommandHandling\ICommand.cs" />
+    <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
     <Compile Include="ExceptionWalker.cs" />
     <Compile Include="IConsole.cs" />
     <Compile Include="NativeConsoleWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\BuiltIn\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

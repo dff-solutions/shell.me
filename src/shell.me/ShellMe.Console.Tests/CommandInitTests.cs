@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using ShellMe.Console.CommandHandling;
 using ShellMe.Console.Configuration;
 using ShellMe.Testing;
 

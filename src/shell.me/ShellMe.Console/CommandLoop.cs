@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ShellMe.Console.CommandHandling;
 using ShellMe.Console.Configuration;
 
 namespace ShellMe.Console
@@ -7,28 +8,27 @@ namespace ShellMe.Console
     public class CommandLoop
     {
         private readonly CommandFactory _commandFactory;
-        private static CommandPropertyWalker _commandPropertyWalker;
-        //private SetupProvider _setupProvider;
+        private static ICommandPropertyWalker _commandPropertyWalker;
 
-        public CommandLoop(IConsole console) : this(console, 
-            new CommandFactory(new ICommand[]
-            {
-            }))
+        public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
         {
         }
 
-        public CommandLoop(IConsole console, CommandFactory commandFactory)
+        public CommandLoop(IConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker())
+        {
+        }
+
+        public CommandLoop(IConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker)
         {
             Console = console;
             _commandFactory = commandFactory;
-            _commandPropertyWalker = new CommandPropertyWalker();
+            _commandPropertyWalker = commandPropertyWalker;
         }
 
         public static IConsole Console { get; private set; }
 
         public void Start(string[] args)
         {
-            //_setupProvider = new SetupProvider(_commandFactory);
             var commandMatcher = new CommandMatcher(args);
             var command = _commandFactory.GetCommand(commandMatcher.CommandName);
 

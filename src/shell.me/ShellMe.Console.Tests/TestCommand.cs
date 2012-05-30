@@ -1,4 +1,5 @@
-﻿using ShellMe.Console.Configuration;
+﻿using ShellMe.Console.CommandHandling;
+using ShellMe.Console.Configuration;
 
 namespace ShellMe.Console.Tests
 {
