@@ -34,15 +34,33 @@ namespace ShellMe.Console.Tests
         }
 
         [Test]
-        public void RunsIndefinetlyInInteractiveMode()
+        public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
-            var console = new TestConsole(new List<string>() { "--test", "exit" });
+            var console = new TestConsole(new List<string>() { "--test --interactive", "--test" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "--test", "--IsTest", "--interactive" });
 
             Assert.AreEqual("Run with Test", console.OutputQueue[0]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
             Assert.AreEqual("Run", console.OutputQueue[2]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
+            Assert.AreEqual("Run", console.OutputQueue[4]);
+            Assert.AreEqual(5, console.OutputQueue.Count);
+        }
+
+        [Test]
+        public void RunsTwoTimesInteractiveAndThenIgnoresLastCommandBecauseOfPreviousExit()
+        {
+            var console = new TestConsole(new List<string>() { "--test --interactive", "exit", "--test" });
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--test", "--IsTest", "--interactive" });
+
+            Assert.AreEqual("Run with Test", console.OutputQueue[0]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
+            Assert.AreEqual("Run", console.OutputQueue[2]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
             Assert.AreEqual(4, console.OutputQueue.Count);
         }
     }

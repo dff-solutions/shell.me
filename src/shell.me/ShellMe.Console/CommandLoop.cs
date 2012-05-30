@@ -64,6 +64,7 @@ namespace ShellMe.Console
                             var tempArgs = input.Split(' ');
                             command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
                             TryToProceedCommand(command, tempArgs);
+                            interactive = command.Interactive;
                         }
                     }
                 }
