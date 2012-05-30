@@ -1,32 +1,32 @@
-﻿namespace ShellMe.Console.Configuration
-{
-    class SetupProvider
-    {
-        private readonly ConfigurationFactory _configurationFactory;
+﻿//namespace ShellMe.Console.Configuration
+//{
+//    class SetupProvider
+//    {
+//        private readonly CommandFactory _commandFactory;
 
-        public SetupProvider(ConfigurationFactory configurationFactory)
-        {
-            _configurationFactory = configurationFactory;
-        }
+//        public SetupProvider(CommandFactory commandFactory)
+//        {
+//            _commandFactory = commandFactory;
+//        }
 
-        public Setup GetSetup(string[] args)
-        {
-            var argumentsProvider = new ArgumentsProvider(args);
-            var configurationBundle = _configurationFactory.GetConfigurationBundle(argumentsProvider);
+//        public Setup GetSetup(string[] args)
+//        {
+//            var argumentsProvider = new ArgumentsProvider(args);
+//            var configurationBundle = _commandFactory.GetConfigurationBundle(argumentsProvider);
             
-            if (configurationBundle != null)
-            {
-                var configuration = configurationBundle.CreateConfiguration(argumentsProvider);
-                IProcessor processor = null;
-                if (configuration != null)
-                {
-                    processor = configurationBundle.CreateProcessor(configuration);
-                }
+//            if (configurationBundle != null)
+//            {
+//                var configuration = configurationBundle.CreateConfiguration(argumentsProvider);
+//                IProcessor processor = null;
+//                if (configuration != null)
+//                {
+//                    processor = configurationBundle.CreateProcessor(configuration);
+//                }
 
-                if (configuration != null && processor != null)
-                    return new Setup(configuration, processor);
-            }
-            return null;
-        }
-    }
-}
+//                if (configuration != null && processor != null)
+//                    return new Setup(configuration, processor);
+//            }
+//            return null;
+//        }
+//    }
+//}

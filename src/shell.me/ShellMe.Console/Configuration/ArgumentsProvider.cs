@@ -12,7 +12,7 @@ namespace ShellMe.Console.Configuration
 
         public ArgumentsProvider(IEnumerable<string> arguments)
         {
-            CommandName = arguments == null || !arguments.Any() ? string.Empty : arguments.First().ToLower().Trim();
+            CommandName = arguments == null || !arguments.Any() ? string.Empty : arguments.First().ToLower().Trim().TrimStart('-');
 
             Arguments = arguments == null ? Enumerable.Empty<string>().ToList() : arguments.Select(x => x.Trim()).ToList();
 

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4F0508C3-BC48-442F-8E5A-F932DF34C87B}</ProjectGuid>
+    <ProjectGuid>{8EA04A94-6308-44CD-B4AA-41CF1031EE55}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShellMe.Console</RootNamespace>
-    <AssemblyName>ShellMe.Console</AssemblyName>
+    <RootNamespace>ShellMe.Console.Tests</RootNamespace>
+    <AssemblyName>ShellMe.Console.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,23 +43,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandLoop.cs" />
-    <Compile Include="Configuration\ArgumentsProvider.cs" />
-    <Compile Include="Configuration\BaseCommandConfiguration.cs" />
-    <Compile Include="Configuration\CommandExtensions.cs" />
-    <Compile Include="Configuration\CommandFactory.cs" />
-    <Compile Include="Configuration\ICommand.cs" />
-    <Compile Include="Configuration\ICommandBundle.cs" />
-    <Compile Include="Configuration\IProcessor.cs" />
-    <Compile Include="Configuration\Setup.cs" />
-    <Compile Include="Configuration\SetupProvider.cs" />
-    <Compile Include="ExceptionWalker.cs" />
-    <Compile Include="IConsole.cs" />
-    <Compile Include="NativeConsoleWrapper.cs" />
+    <Compile Include="CommandInitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configuration\BuiltIn\" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShellMe.Console\ShellMe.Console.csproj">
+      <Project>{4F0508C3-BC48-442F-8E5A-F932DF34C87B}</Project>
+      <Name>ShellMe.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShellMe.Testing\ShellMe.Testing.csproj">
+      <Project>{E13AEEEC-4C87-46A3-B33E-50C2656CEAE1}</Project>
+      <Name>ShellMe.Testing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

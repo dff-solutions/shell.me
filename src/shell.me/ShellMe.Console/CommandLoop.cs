@@ -5,85 +5,77 @@ namespace ShellMe.Console
 {
     public class CommandLoop
     {
-        private readonly ConfigurationFactory _configurationFactory;
-        private SetupProvider _setupProvider;
+        private readonly CommandFactory _commandFactory;
+        //private SetupProvider _setupProvider;
 
         public CommandLoop(IConsole console) : this(console, 
-            new ConfigurationFactory(new ICommandBundle[]
+            new CommandFactory(new ICommand[]
             {
             }))
         {
         }
 
-        public CommandLoop(IConsole console, ConfigurationFactory configurationFactory)
+        public CommandLoop(IConsole console, CommandFactory commandFactory)
         {
             Console = console;
-            _configurationFactory = configurationFactory;
+            _commandFactory = commandFactory;
         }
 
         public static IConsole Console { get; private set; }
 
         public void Start(string[] args)
         {
-            _setupProvider = new SetupProvider(_configurationFactory);
-
-            var setup = _setupProvider.GetSetup(args);
-            var interactive = setup == null || setup.CommandConfiguration.Interactive;
+            //_setupProvider = new SetupProvider(_commandFactory);
+            var argumentsProvider = new ArgumentsProvider(args);
+            var command = _commandFactory.GetCommand(argumentsProvider);
+            var interactive = true; //command == null || command.CommandConfiguration.Interactive;
             var exit = false;
 
-            TryToProceedCommand(setup);
+            TryToProceedCommand(command);
 
-            while (interactive && !exit)
-            {
-                if (setup != null)
-                    Console.WriteLine("commandConfiguration: " + setup.CommandConfiguration.Name);
-                else
-                    Console.WriteLine("Enter commands or type exit to close");
+            //while (interactive && !exit)
+            //{
+            //    if (command != null)
+            //        Console.WriteLine("commandConfiguration: " + command.CommandConfiguration.Name);
+            //    else
+            //        Console.WriteLine("Enter commands or type exit to close");
 
-                var isValid = setup != null && setup.CommandConfiguration.IsValid;
+            //    var isValid = command != null && command.CommandConfiguration.IsValid;
 
-                if (interactive && !isValid)
-                {
-                    var input = Console.ReadLine();
+            //    if (interactive && !isValid)
+            //    {
+            //        var input = Console.ReadLine();
 
-                    if (!string.IsNullOrEmpty(input))
-                    {
-                        if (input.ToLower() == "exit")
-                            exit = true;
-                        else
-                            setup = _setupProvider.GetSetup(input.Split(' '));
-                    }
-                }
+            //        if (!string.IsNullOrEmpty(input))
+            //        {
+            //            if (input.ToLower() == "exit")
+            //                exit = true;
+            //            else
+            //                command = _setupProvider.GetSetup(input.Split(' '));
+            //        }
+            //    }
 
-                TryToProceedCommand(setup);
-                setup = null;
-            }
+            //    TryToProceedCommand(command);
+            //    command = null;
+            //}
         }
 
-        private static void TryToProceedCommand(Setup setup)
+        private static void TryToProceedCommand(ICommand command)
         {
-            if (setup != null)
+            if (command != null)
             {
-                if (setup.CommandConfiguration.IsValid)
+                try
                 {
-                    try
-                    {
-                        setup.Processor.Process();
-                    }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine("Unexpected error happended while proceeding the command: " + setup.CommandConfiguration.Name);
-                        var exceptionWalker = new ExceptionWalker(exception);
-                        foreach (var message in exceptionWalker.GetExceptionMessages())
-                        {
-                            Console.WriteLine(message);
-                        }
-                    }
+                    command.Run();
                 }
-                else
+                catch (Exception exception)
                 {
-                    Console.WriteLine(string.Format("I recognized your command as '{0}'but there were errors:", setup.CommandConfiguration.Name));
-                    setup.CommandConfiguration.ConfigurationErrors.ForEach(Console.WriteLine);
+                    Console.WriteLine("Unexpected error happended while proceeding the command: " + command.Name);
+                    var exceptionWalker = new ExceptionWalker(exception);
+                    foreach (var message in exceptionWalker.GetExceptionMessages())
+                    {
+                        Console.WriteLine(message);
+                    }
                 }
             }
         }
