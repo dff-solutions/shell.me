@@ -26,9 +26,6 @@ namespace ShellMe.Console.CommandHandling
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
         {
-            if (ContainsArgument(arguments, "interactive"))
-                command.Interactive = true;
-
             foreach (var argument in command.GetCommandProperties())
             {
                 if (argument.CanWrite)
@@ -43,11 +40,6 @@ namespace ShellMe.Console.CommandHandling
                     }
                 }
             }
-        }
-
-        private bool ContainsArgument(IEnumerable<string> arguments, string argument)
-        {
-            return arguments.Select(arg => arg.Trim()).Contains("--" + argument);
         }
 
         private CommandArgument GetArgument(IEnumerable<string> arguments, string argument)
