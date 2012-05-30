@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImpromptuInterface">
+      <HintPath>..\packages\ImpromptuInterface.5.6.7\lib\net40\ImpromptuInterface.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,13 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLoop.cs" />
-    <Compile Include="Configuration\ArgumentsProvider.cs" />
+    <Compile Include="Configuration\CommandMatcher.cs" />
+    <Compile Include="Configuration\BaseCommand.cs" />
     <Compile Include="Configuration\BaseCommandConfiguration.cs" />
     <Compile Include="Configuration\CommandExtensions.cs" />
     <Compile Include="Configuration\CommandFactory.cs" />
     <Compile Include="Configuration\ICommand.cs" />
     <Compile Include="Configuration\ICommandBundle.cs" />
     <Compile Include="Configuration\IProcessor.cs" />
+    <Compile Include="Configuration\CommandPropertyWalker.cs" />
     <Compile Include="Configuration\Setup.cs" />
     <Compile Include="Configuration\SetupProvider.cs" />
     <Compile Include="ExceptionWalker.cs" />
@@ -57,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\BuiltIn\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

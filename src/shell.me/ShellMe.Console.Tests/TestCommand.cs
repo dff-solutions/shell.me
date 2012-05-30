@@ -2,16 +2,17 @@
 
 namespace ShellMe.Console.Tests
 {
-    class TestCommand : ICommand
+    class TestCommand : BaseCommand
     {
-        public string Name
+        public override string Name
         {
             get { return "Test"; }
         }
 
-        public void Run()
+        public override void Run()
         {
-            throw new System.NotImplementedException();
+            string text = IsTest ? "Run with Test" : "Run";
+            Console.WriteLine(text);
         }
 
         public bool IsTest { get; set; }

@@ -13,12 +13,16 @@ namespace ShellMe.Console.Configuration
             _commands = commands;
         }
 
-        public ICommand GetCommand(ArgumentsProvider argumentsProvider)
+        public ICommand GetCommand(string commandName)
         {
             var command = _commands
-                            .FirstOrDefault(bundle => bundle.Name.Equals(argumentsProvider.CommandName, StringComparison.OrdinalIgnoreCase));
+                            .FirstOrDefault(bundle => bundle.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
 
-            return command;
+            if (command == null)
+                return null;
+
+            //We allways want to return a fresh instance to have an isolated scope (e.g. no properties interfering each other)
+            return (ICommand)Activator.CreateInstance(command.GetType());
         }
     }
 }

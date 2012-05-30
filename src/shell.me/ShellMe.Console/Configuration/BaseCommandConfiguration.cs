@@ -1,32 +1,32 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿//using System.Collections.Generic;
+//using System.Linq;
 
-namespace ShellMe.Console.Configuration
-{
-    public abstract class BaseCommandConfiguration
-    {
-        private readonly IList<string> _arguments;
+//namespace ShellMe.Console.Configuration
+//{
+//    public abstract class BaseCommandConfiguration
+//    {
+//        private readonly IList<string> _arguments;
 
-        protected BaseCommandConfiguration(ArgumentsProvider argumentsProvider)
-        {
-            ConfigurationErrors = new List<string>();
-            _arguments = argumentsProvider.Arguments;
-            SaveArguments = argumentsProvider.SaveArguments;
+//        protected BaseCommandConfiguration(CommandMatcher commandMatcher)
+//        {
+//            ConfigurationErrors = new List<string>();
+//            _arguments = commandMatcher.Arguments;
+//            SaveArguments = commandMatcher.SaveArguments;
 
-            if (_arguments.Select(x => x.ToLower()).Contains("interactive"))
-            {
-                Interactive = true;
-            }
-        }
+//            if (_arguments.Select(x => x.ToLower()).Contains("interactive"))
+//            {
+//                Interactive = true;
+//            }
+//        }
 
-        public abstract string Name { get; }
+//        public abstract string Name { get; }
 
-        public bool IsValid { get; set; }
+//        public bool IsValid { get; set; }
 
-        public bool Interactive { protected set; get; }
+//        public bool Interactive { protected set; get; }
 
-        protected IList<string> SaveArguments { get; private set; }
+//        protected IList<string> SaveArguments { get; private set; }
 
-        public List<string> ConfigurationErrors { get; private set; } 
-    }
-}
+//        public List<string> ConfigurationErrors { get; private set; } 
+//    }
+//}

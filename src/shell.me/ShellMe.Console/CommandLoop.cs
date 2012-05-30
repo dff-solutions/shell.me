@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ShellMe.Console.Configuration;
 
 namespace ShellMe.Console
@@ -6,6 +7,7 @@ namespace ShellMe.Console
     public class CommandLoop
     {
         private readonly CommandFactory _commandFactory;
+        private static CommandPropertyWalker _commandPropertyWalker;
         //private SetupProvider _setupProvider;
 
         public CommandLoop(IConsole console) : this(console, 
@@ -19,6 +21,7 @@ namespace ShellMe.Console
         {
             Console = console;
             _commandFactory = commandFactory;
+            _commandPropertyWalker = new CommandPropertyWalker();
         }
 
         public static IConsole Console { get; private set; }
@@ -26,47 +29,59 @@ namespace ShellMe.Console
         public void Start(string[] args)
         {
             //_setupProvider = new SetupProvider(_commandFactory);
-            var argumentsProvider = new ArgumentsProvider(args);
-            var command = _commandFactory.GetCommand(argumentsProvider);
-            var interactive = true; //command == null || command.CommandConfiguration.Interactive;
+            var commandMatcher = new CommandMatcher(args);
+            var command = _commandFactory.GetCommand(commandMatcher.CommandName);
+
+            if (command != null)
+            {
+                _commandPropertyWalker.FillCommandProperties(args, command);
+            }
+
+            var interactive = command == null || command.Interactive;
             var exit = false;
 
-            TryToProceedCommand(command);
+            TryToProceedCommand(command, args);
 
-            //while (interactive && !exit)
-            //{
-            //    if (command != null)
-            //        Console.WriteLine("commandConfiguration: " + command.CommandConfiguration.Name);
-            //    else
-            //        Console.WriteLine("Enter commands or type exit to close");
+            while (interactive && !exit)
+            {
+                if (command != null && command.Verbose)
+                    Console.WriteLine("commandConfiguration: " + command.Name);
+                else
+                    Console.WriteLine("Enter commands or type exit to close");
 
-            //    var isValid = command != null && command.CommandConfiguration.IsValid;
+                //var isValid = command != null && command.CommandConfiguration.IsValid;
 
-            //    if (interactive && !isValid)
-            //    {
-            //        var input = Console.ReadLine();
+                if (interactive)
+                {
+                    var input = Console.ReadLine();
 
-            //        if (!string.IsNullOrEmpty(input))
-            //        {
-            //            if (input.ToLower() == "exit")
-            //                exit = true;
-            //            else
-            //                command = _setupProvider.GetSetup(input.Split(' '));
-            //        }
-            //    }
+                    if (!string.IsNullOrEmpty(input))
+                    {
+                        if (input.ToLower() == "exit")
+                            exit = true;
+                        else
+                        {
+                            var tempArgs = input.Split(' ');
+                            command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
+                            TryToProceedCommand(command, tempArgs);
+                        }
+                    }
+                }
 
-            //    TryToProceedCommand(command);
-            //    command = null;
-            //}
+                command = null;
+            }
         }
 
-        private static void TryToProceedCommand(ICommand command)
+        private static bool TryToProceedCommand(ICommand command, IEnumerable<string> args)
         {
             if (command != null)
             {
                 try
                 {
+                    _commandPropertyWalker.FillCommandProperties(args, command);
+                    command.Console = Console;
                     command.Run();
+                    return true;
                 }
                 catch (Exception exception)
                 {
@@ -76,8 +91,10 @@ namespace ShellMe.Console
                     {
                         Console.WriteLine(message);
                     }
+                    return false;
                 }
             }
+            return false;
         }
     }
 }

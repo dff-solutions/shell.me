@@ -19,7 +19,31 @@ namespace ShellMe.Console.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "--test" });
 
-            Assert.AreEqual("Unexpected error happended while proceeding the command: Test", console.OutputQueue[0]);
+            Assert.AreEqual("Run", console.OutputQueue[0]);
+        }
+
+        [Test]
+        public void SetsBooleanCommandProperties()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--test", "--IsTest" });
+
+            Assert.AreEqual("Run with Test", console.OutputQueue[0]);
+        }
+
+        [Test]
+        public void RunsIndefinetlyInInteractiveMode()
+        {
+            var console = new TestConsole(new List<string>() { "--test", "exit" });
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--test", "--IsTest", "--interactive" });
+
+            Assert.AreEqual("Run with Test", console.OutputQueue[0]);
+            Assert.AreEqual("Run", console.OutputQueue[2]);
+            Assert.AreEqual(4, console.OutputQueue.Count);
         }
     }
 }
