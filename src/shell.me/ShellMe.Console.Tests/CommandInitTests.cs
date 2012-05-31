@@ -24,6 +24,18 @@ namespace ShellMe.Console.Tests
         }
 
         [Test]
+        public void SwitchesToInteractiveModeIfStartedWithoutAnyCommand()
+        {
+            var console = new TestConsole(new List<string>() { "--test" });
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new string[]{});
+
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[0]);
+            Assert.AreEqual("Run", console.OutputQueue[1]);
+        }
+
+        [Test]
         public void SetsBooleanCommandProperties()
         {
             var console = new TestConsole(new List<string>());
