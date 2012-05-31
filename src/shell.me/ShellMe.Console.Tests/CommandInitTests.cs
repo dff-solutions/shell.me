@@ -69,6 +69,26 @@ namespace ShellMe.Console.Tests
         }
 
         [Test]
+        public void InterpretsIntArgumentAssignment()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new IntPropertyCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--test", "--Size = 5 " });
+
+            Assert.AreEqual("5", console.OutputQueue[0]);
+        }
+
+        [Test]
+        public void IgnoresUnsupportedPropertyTypes()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new UnknownPropertyCommand(),  });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test", "--Size = {X: 5, Y: 10 } " }));
+        }
+
+        [Test]
         public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
             var console = new TestConsole(new List<string>() { "--test --interactive", "--test" });

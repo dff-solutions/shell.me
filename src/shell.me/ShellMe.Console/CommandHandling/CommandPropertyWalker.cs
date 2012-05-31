@@ -24,6 +24,13 @@ namespace ShellMe.Console.CommandHandling
                 || arg.Value.Equals("1", StringComparison.OrdinalIgnoreCase));
 
             TypeProviders.Add("System.String", arg => arg.Value);
+
+            TypeProviders.Add("System.Int32", arg =>
+                                                  {
+                                                      int value;
+                                                      int.TryParse(arg.Value, out value);
+                                                      return value;
+                                                  });
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
@@ -35,7 +42,7 @@ namespace ShellMe.Console.CommandHandling
                     
                     var arg = GetArgument(arguments, argument.Name);
 
-                    if (arg != null && TypeProviders[argument.PropertyType.FullName] != null)
+                    if (arg != null && TypeProviders.ContainsKey(argument.PropertyType.FullName))
                     {
                         var value = TypeProviders[argument.PropertyType.FullName](arg);
                         Impromptu.InvokeSet(command, argument.Name, value);

@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,6 +46,8 @@
   <ItemGroup>
     <Compile Include="CommandInitTests.cs" />
     <Compile Include="ExceptionCommand.cs" />
+    <Compile Include="IntPropertyCommand.cs" />
+    <Compile Include="UnknownPropertyCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCommand.cs" />
   </ItemGroup>
