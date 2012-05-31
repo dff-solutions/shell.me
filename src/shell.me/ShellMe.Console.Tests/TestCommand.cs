@@ -12,10 +12,11 @@ namespace ShellMe.Console.Tests
 
         public override void Run()
         {
-            string text = IsTest ? "Run with Test" : "Run";
-            Console.WriteLine(text);
+            Console.WriteLine(string.Format("Run. Test: {0}, Text: {1}", IsTest, Text));
         }
 
         public bool IsTest { get; set; }
+
+        public string Text { get;set; }
     }
 }

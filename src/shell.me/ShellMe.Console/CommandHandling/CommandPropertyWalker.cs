@@ -22,6 +22,8 @@ namespace ShellMe.Console.CommandHandling
             TypeProviders.Add("System.Boolean", arg => arg.Value == null 
                 || arg.Value.Equals("true", StringComparison.OrdinalIgnoreCase)
                 || arg.Value.Equals("1", StringComparison.OrdinalIgnoreCase));
+
+            TypeProviders.Add("System.String", arg => arg.Value);
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
