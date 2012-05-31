@@ -75,5 +75,18 @@ namespace ShellMe.Console.Tests
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
             Assert.AreEqual(4, console.OutputQueue.Count);
         }
+
+        [Test]
+        public void PrintsExceptionsToTheConsole()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new ExceptionCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "--RaiseException" });
+
+            Assert.AreEqual("Unexpected error happended while proceeding the command: RaiseException", console.OutputQueue[0]);
+            Assert.AreEqual("Foo", console.OutputQueue[1]);
+            Assert.AreEqual("Bar", console.OutputQueue[2]);
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace ShellMe.Console
 {
     class ExceptionWalker
     {
-        private readonly Exception _exception;
+        private Exception _exception;
 
         public ExceptionWalker(Exception exception)
         {
@@ -14,14 +14,10 @@ namespace ShellMe.Console
 
         public IEnumerable<string> GetExceptionMessages()
         {
-            Func<Exception, Exception> getInnerException = (ex) => ex.InnerException;
-            yield return _exception.Message;
-            Exception innerException = getInnerException(_exception);
-            while (innerException != null)
+            while (_exception != null)
             {
-                yield return innerException.Message;
-                if (innerException != null)
-                    innerException = getInnerException(innerException);
+                yield return _exception.Message;
+                _exception = _exception.InnerException;
             }
         }
     }
