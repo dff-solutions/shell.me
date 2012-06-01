@@ -8,7 +8,7 @@ namespace ShellMe.Console
     public class CommandLoop
     {
         private readonly CommandFactory _commandFactory;
-        private static ICommandPropertyWalker _commandPropertyWalker;
+        private readonly ICommandPropertyWalker _commandPropertyWalker;
 
         public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
         {
@@ -73,7 +73,7 @@ namespace ShellMe.Console
             }
         }
 
-        private static bool TryToProceedCommand(ICommand command, IEnumerable<string> args)
+        private bool TryToProceedCommand(ICommand command, IEnumerable<string> args)
         {
             if (command != null)
             {
