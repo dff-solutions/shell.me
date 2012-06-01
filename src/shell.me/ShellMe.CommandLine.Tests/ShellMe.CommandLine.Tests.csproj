@@ -55,7 +55,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShellMe.Console\ShellMe.CommandLine.csproj">
+    <ProjectReference Include="..\ShellMe.CommandLine\ShellMe.CommandLine.csproj">
       <Project>{4F0508C3-BC48-442F-8E5A-F932DF34C87B}</Project>
       <Name>ShellMe.CommandLine</Name>
     </ProjectReference>
