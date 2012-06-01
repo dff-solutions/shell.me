@@ -11,11 +11,24 @@ namespace ShellMe.CommandLine.Tests
         public void CanInitializeCommand()
         {
             var console = new TestConsole(new List<string>() {"--test"});
-            var commandFactory = new CommandFactory(new[] {new TestCommand()});
+            //var commandFactory = new CommandFactory(new[] {new TestCommand()});
+            var commandFactory = new CommandFactory(new ICommand[]{});
+            
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "--test" });
 
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
+        }
+
+        [Test]
+        public void RunningUnknownCommandsDoesNotThrowException()
+        {
+            var console = new TestConsole(new List<string>() {"--test", "exit" });
+            //var commandFactory = new CommandFactory(new[] {new TestCommand()});
+            var commandFactory = new CommandFactory(new ICommand[] { });
+
+            var commandLoop = new CommandLoop(console, commandFactory);
+            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test" }));
         }
 
         [Test]

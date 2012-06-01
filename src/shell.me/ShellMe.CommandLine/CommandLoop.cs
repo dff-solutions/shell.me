@@ -60,8 +60,8 @@ namespace ShellMe.CommandLine
                         {
                             var tempArgs = input.Split(' ');
                             command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
-                            TryToProceedCommand(command, tempArgs);
-                            interactive = command.Interactive;
+                            if (TryToProceedCommand(command, tempArgs))
+                                interactive = command.Interactive;
                         }
                     }
                 }
