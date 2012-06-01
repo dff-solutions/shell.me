@@ -27,7 +27,7 @@ namespace ShellMe.CommandLine
             _commandPropertyWalker = commandPropertyWalker;
         }
 
-        public static IConsole Console { get; private set; }
+        private IConsole Console { get; set; }
 
         public void Start(string[] args)
         {
