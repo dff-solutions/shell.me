@@ -1,8 +1,8 @@
 ﻿using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.CommandLine.Tests
+namespace ShellMe.Testing
 {
-    class TestCommand : BaseCommand
+    public class TestCommand : BaseCommand
     {
         public override string Name
         {

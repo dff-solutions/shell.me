@@ -1,9 +1,8 @@
-﻿using System.Drawing;
-using ShellMe.CommandLine.CommandHandling;
+﻿using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.CommandLine.Tests
+namespace ShellMe.Testing
 {
-    class UnknownPropertyCommand : BaseCommand
+    public class IntPropertyCommand : BaseCommand
     {
         public override string Name
         {
@@ -15,6 +14,6 @@ namespace ShellMe.CommandLine.Tests
             Console.WriteLine(Size.ToString());
         }
 
-        public Point Size { get; set; }
+        public int Size { get; set; }
     }
 }

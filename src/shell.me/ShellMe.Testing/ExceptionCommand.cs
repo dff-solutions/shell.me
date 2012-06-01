@@ -1,9 +1,9 @@
 ﻿using System;
 using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.CommandLine.Tests
+namespace ShellMe.Testing
 {
-    class ExceptionCommand : BaseCommand
+    public class ExceptionCommand : BaseCommand
     {
         public override string Name
         {
