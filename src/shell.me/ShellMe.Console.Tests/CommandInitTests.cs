@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
-using ShellMe.Console.CommandHandling;
-using ShellMe.Console.Configuration;
+using ShellMe.CommandLine.CommandHandling;
 using ShellMe.Testing;
 
-namespace ShellMe.Console.Tests
+namespace ShellMe.CommandLine.Tests
 {
     public class CommandInitTests
     {

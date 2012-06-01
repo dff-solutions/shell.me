@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using ShellMe.Console.CommandHandling;
+using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.Console.Tests
+namespace ShellMe.CommandLine.Tests
 {
     class UnknownPropertyCommand : BaseCommand
     {

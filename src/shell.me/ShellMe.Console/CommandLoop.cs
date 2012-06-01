@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ShellMe.Console.CommandHandling;
-using ShellMe.Console.Configuration;
+using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.Console
+namespace ShellMe.CommandLine
 {
     public class CommandLoop
     {

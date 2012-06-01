@@ -1,8 +1,7 @@
 ﻿using System;
-using ShellMe.Console.CommandHandling;
-using ShellMe.Console.Configuration;
+using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.Console.Tests
+namespace ShellMe.CommandLine.Tests
 {
     class ExceptionCommand : BaseCommand
     {

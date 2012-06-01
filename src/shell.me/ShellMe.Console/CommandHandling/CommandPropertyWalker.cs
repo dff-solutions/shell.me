@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ImpromptuInterface;
-using ShellMe.Console.Configuration;
 
-namespace ShellMe.Console.CommandHandling
+namespace ShellMe.CommandLine.CommandHandling
 {
     public interface ICommandPropertyWalker
     {

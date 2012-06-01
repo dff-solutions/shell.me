@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellMe.Console", "ShellMe.Console\ShellMe.Console.csproj", "{4F0508C3-BC48-442F-8E5A-F932DF34C87B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellMe.CommandLine", "ShellMe.Console\ShellMe.CommandLine.csproj", "{4F0508C3-BC48-442F-8E5A-F932DF34C87B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellMe.Console.Tests", "ShellMe.Console.Tests\ShellMe.Console.Tests.csproj", "{8EA04A94-6308-44CD-B4AA-41CF1031EE55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellMe.CommandLine.Tests", "ShellMe.Console.Tests\ShellMe.CommandLine.Tests.csproj", "{8EA04A94-6308-44CD-B4AA-41CF1031EE55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellMe.Testing", "ShellMe.Testing\ShellMe.Testing.csproj", "{E13AEEEC-4C87-46A3-B33E-50C2656CEAE1}"
 EndProject

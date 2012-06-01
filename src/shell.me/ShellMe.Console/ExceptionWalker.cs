@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShellMe.Console
+namespace ShellMe.CommandLine
 {
     class ExceptionWalker
     {

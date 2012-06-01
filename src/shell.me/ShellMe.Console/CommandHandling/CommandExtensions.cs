@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using ShellMe.Console.Configuration;
 
-namespace ShellMe.Console.CommandHandling
+namespace ShellMe.CommandLine.CommandHandling
 {
     public static class CommandExtensions
     {

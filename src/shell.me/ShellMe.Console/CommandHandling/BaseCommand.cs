@@ -1,6 +1,4 @@
-﻿using ShellMe.Console.Configuration;
-
-namespace ShellMe.Console.CommandHandling
+﻿namespace ShellMe.CommandLine.CommandHandling
 {
     public abstract class BaseCommand : ICommand
     {

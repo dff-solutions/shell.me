@@ -1,4 +1,4 @@
-﻿namespace ShellMe.Console
+﻿namespace ShellMe.CommandLine
 {
     public interface IConsole
     {

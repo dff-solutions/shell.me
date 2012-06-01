@@ -1,6 +1,4 @@
-﻿
-
-namespace ShellMe.Console
+﻿namespace ShellMe.CommandLine
 {
     public class NativeConsoleWrapper : IConsole
     {

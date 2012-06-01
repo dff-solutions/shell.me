@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ShellMe.Console;
+using ShellMe.CommandLine;
 
 namespace ShellMe.Testing
 {
