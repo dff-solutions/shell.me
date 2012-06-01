@@ -9,6 +9,9 @@ namespace ShellMe.CommandLine
         private readonly CommandFactory _commandFactory;
         private readonly ICommandPropertyWalker _commandPropertyWalker;
 
+        public CommandLoop() : this(new NativeConsoleWrapper())
+        {}
+
         public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
         {
         }
@@ -43,12 +46,7 @@ namespace ShellMe.CommandLine
 
             while (interactive && !exit)
             {
-                if (command != null && command.Verbose)
-                    Console.WriteLine("commandConfiguration: " + command.Name);
-                else
-                    Console.WriteLine("Enter commands or type exit to close");
-
-                //var isValid = command != null && command.CommandConfiguration.IsValid;
+                Console.WriteLine("Enter commands or type exit to close");
 
                 if (interactive)
                 {
@@ -67,8 +65,6 @@ namespace ShellMe.CommandLine
                         }
                     }
                 }
-
-                command = null;
             }
         }
 
@@ -76,6 +72,9 @@ namespace ShellMe.CommandLine
         {
             if (command != null)
             {
+                if (command.Verbose)
+                    Console.WriteLine("Proceeding Command: " + command.Name);
+
                 try
                 {
                     _commandPropertyWalker.FillCommandProperties(args, command);
