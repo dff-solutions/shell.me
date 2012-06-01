@@ -11,8 +11,7 @@ namespace ShellMe.CommandLine.Tests
         public void CanInitializeCommand()
         {
             var console = new TestConsole(new List<string>() {"--test"});
-            //var commandFactory = new CommandFactory(new[] {new TestCommand()});
-            var commandFactory = new CommandFactory(new ICommand[]{});
+            var commandFactory = new CommandFactory(new[] {new TestCommand()});
             
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "--test" });
