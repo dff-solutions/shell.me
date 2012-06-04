@@ -84,12 +84,14 @@ namespace ShellMe.CommandLine
                 }
                 catch (Exception exception)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Unexpected error happended while proceeding the command: " + command.Name);
                     var exceptionWalker = new ExceptionWalker(exception);
                     foreach (var message in exceptionWalker.GetExceptionMessages())
                     {
                         Console.WriteLine(message);
                     }
+                    Console.ResetColor();
                     return false;
                 }
             }

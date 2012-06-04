@@ -16,7 +16,9 @@ namespace ShellMe.CommandLine
         {
             while (_exception != null)
             {
-                yield return _exception.Message;
+                yield return string.Format("Exception: {0}", _exception.Message);
+                if (!string.IsNullOrEmpty(_exception.StackTrace))
+                    yield return string.Format("Stacktrace: {0}", _exception.StackTrace);
                 _exception = _exception.InnerException;
             }
         }

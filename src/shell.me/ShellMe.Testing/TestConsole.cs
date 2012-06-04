@@ -29,5 +29,11 @@ namespace ShellMe.Testing
             _commandQueue.RemoveAt(0);
             return first;
         }
+
+        public ConsoleColor ForegroundColor { get; set; }
+
+        public void ResetColor()
+        {
+        }
     }
 }

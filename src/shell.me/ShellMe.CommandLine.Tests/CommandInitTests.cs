@@ -135,8 +135,9 @@ namespace ShellMe.CommandLine.Tests
             commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
 
             Assert.AreEqual("Unexpected error happended while proceeding the command: RaiseException", console.OutputQueue[0]);
-            Assert.AreEqual("Foo", console.OutputQueue[1]);
-            Assert.AreEqual("Bar", console.OutputQueue[2]);
+            Assert.AreEqual("Exception: Foo", console.OutputQueue[1]);
+            Assert.IsTrue(console.OutputQueue[2].StartsWith("Stacktrace:"));
+            Assert.AreEqual("Exception: Bar", console.OutputQueue[3]);
         }
     }
 }
