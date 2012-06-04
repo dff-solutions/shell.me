@@ -54,7 +54,9 @@ namespace ShellMe.CommandLine.CommandHandling
         {
             var tempArg = arguments
                     .Select(arg => arg.Trim())
-                    .FirstOrDefault(arg => arg.StartsWith("--" + argument, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(arg => 
+                        arg.StartsWith("--") 
+                        && arg.Substring(2).Replace("-", "").StartsWith(argument,StringComparison.OrdinalIgnoreCase));
 
             if (tempArg == null)
                 return null;

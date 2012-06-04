@@ -9,7 +9,7 @@ namespace ShellMe.CommandLine.CommandHandling
 
         public CommandMatcher(IEnumerable<string> arguments)
         {
-            CommandName = arguments == null || !arguments.Any() ? string.Empty : arguments.First().ToLower().Trim().TrimStart('-');
+            CommandName = arguments == null || !arguments.Any() ? string.Empty : arguments.First().ToLower().Trim();
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         IConsole Console { get; set; }
 
-        bool Interactive { get; set; }
+        bool NonInteractive { get; set; }
 
         bool Verbose { get; set; }
 

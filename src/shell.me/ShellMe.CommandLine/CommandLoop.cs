@@ -39,16 +39,16 @@ namespace ShellMe.CommandLine
                 _commandPropertyWalker.FillCommandProperties(args, command);
             }
 
-            var interactive = command == null || command.Interactive;
+            var nonInteractive = command != null && command.NonInteractive;
             var exit = false;
 
             TryToProceedCommand(command, args);
 
-            while (interactive && !exit)
+            while (!nonInteractive && !exit)
             {
                 Console.WriteLine("Enter commands or type exit to close");
 
-                if (interactive)
+                if (!nonInteractive)
                 {
                     var input = Console.ReadLine();
 
@@ -61,7 +61,7 @@ namespace ShellMe.CommandLine
                             var tempArgs = input.Split(' ');
                             command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
                             if (TryToProceedCommand(command, tempArgs))
-                                interactive = command.Interactive;
+                                nonInteractive = command.NonInteractive;
                         }
                     }
                 }

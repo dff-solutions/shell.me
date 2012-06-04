@@ -10,11 +10,11 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void CanInitializeCommand()
         {
-            var console = new TestConsole(new List<string>() {"--test"});
+            var console = new TestConsole(new List<string>() {});
             var commandFactory = new CommandFactory(new[] {new TestCommand()});
             
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test" });
+            commandLoop.Start(new[] { "test", "--non-interactive" });
 
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
         }
@@ -33,7 +33,7 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void SwitchesToInteractiveModeIfStartedWithoutAnyCommand()
         {
-            var console = new TestConsole(new List<string>() { "--test" });
+            var console = new TestConsole(new List<string>() { "test --nonInteractive" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
@@ -48,7 +48,7 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--IsTest" });
+            commandLoop.Start(new[] { "test", "--IsTest", "--nonInteractive" });
 
             Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
         }
@@ -59,7 +59,7 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--IsTest = false" });
+            commandLoop.Start(new[] { "test", "--IsTest = false", "--nonInteractive" });
 
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
         }
@@ -70,7 +70,7 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--IsTest = false ", "--Text=Foo" });
+            commandLoop.Start(new[] { "test", "--IsTest = false ", "--Text=Foo", "--non-interactive" });
 
             Assert.AreEqual("Run. Test: False, Text: Foo", console.OutputQueue[0]);
         }
@@ -81,7 +81,7 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new IntPropertyCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--Size = 5 " });
+            commandLoop.Start(new[] { "test", "--Size = 5 ", "--nonInteractive" });
 
             Assert.AreEqual("5", console.OutputQueue[0]);
         }
@@ -92,16 +92,16 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new UnknownPropertyCommand(),  });
             var commandLoop = new CommandLoop(console, commandFactory);
-            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test", "--Size = {X: 5, Y: 10 } " }));
+            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "test", "--Size = {X: 5, Y: 10 } ", "--nonInteractive" }));
         }
 
         [Test]
         public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
-            var console = new TestConsole(new List<string>() { "--test --interactive", "--test" });
+            var console = new TestConsole(new List<string>() { "test", "test --nonInteractive" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--IsTest", "--interactive" });
+            commandLoop.Start(new[] { "test", "--IsTest" });
 
             Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
@@ -114,10 +114,10 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void RunsTwoTimesInteractiveAndThenIgnoresLastCommandBecauseOfPreviousExit()
         {
-            var console = new TestConsole(new List<string>() { "--test --interactive", "exit", "--test" });
+            var console = new TestConsole(new List<string>() { "test", "exit", "--test" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--test", "--IsTest", "--interactive" });
+            commandLoop.Start(new[] { "test", "--IsTest" });
 
             Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
@@ -132,7 +132,7 @@ namespace ShellMe.CommandLine.Tests
             var console = new TestConsole(new List<string>());
             var commandFactory = new CommandFactory(new[] { new ExceptionCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "--RaiseException" });
+            commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
 
             Assert.AreEqual("Unexpected error happended while proceeding the command: RaiseException", console.OutputQueue[0]);
             Assert.AreEqual("Foo", console.OutputQueue[1]);
