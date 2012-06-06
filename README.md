@@ -22,7 +22,7 @@ What does shell.me offer?
   
 - it does all the heavy lifting for you. No need to parse parameters yourself. Let's
   say your command foo needs an int argument (e.g. BatchSize). All you've got to do is
-  to add an int property ```Batchsize``` to your command. Now you can use it like this:
+  to add an int property ```BatchSize``` to your command. Now you can use it like this:
   ```foo --batchsize=100```. And say you also want a boolean property ```Force```. Easy!
 
   You can either say: 
@@ -46,7 +46,7 @@ What does shell.me offer?
   
   ```ShellMe.Console``` a console app that uses ShellMe.CommandLine to provide a basic shell
   
-  ```ShellMe.Testing``` provides useful helpers for testing
+  ```ShellMe.Testing``` provides useful helpers for testing.
   We care a lot about testing. That's why we also provide you with rich testing helpers.
   For instance, we have a TestConsole that you can use to write unit tests against custom commands.
   
