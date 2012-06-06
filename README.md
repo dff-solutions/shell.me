@@ -26,13 +26,30 @@ What does shell.me offer?
   ```foo --batchsize=100```. And say you also want a boolean property ```Force```. Easy!
 
   You can either say: 
+  
   ```foo --batchsize=100 --force``` //means force == true  
   ```foo --force=true``` //means force == true  
   ```foo --force=false``` // means force == false
   
 - it is trivially extensible. For example: We parse a lot of common types for you.
-  But if for example, you want to use the ```Point``` type as a command argument, you
+  But if for instance, you want to use the ```Point``` type as a command argument, you
   need to give shell.me a hint. Just add a custom TypeProvider and add it to the
   collection of built in TypeProviders. That's the way to teach shell.me new tricks!
-  After that you could use it like that for example: foo --Point={ X: 4, Y: 3} 
- 
+  After that you could use it like that for example: ```foo --Point={ X: 4, Y: 3}``` 
+  
+- it's layered into small chunks to provide rich flexibility
+  
+  ```ShellMe.CommandLine``` hosts the core functionality of shell.me
+  That's a simple dll (not a console app!) that you actually can use to build a shell
+  on top of it. For instance, you could build a html shell, a wpf shell - it's really
+  up to you!
+  
+  ```ShellMe.Console``` a console app that uses ShellMe.CommandLine to provide a basic shell
+  
+  ```ShellMe.Testing``` provides useful helpers for testing
+  We care a lot about testing. That's why we also provide you with rich testing helpers.
+  For instance, we have a TestConsole that you can use to write unit tests against custom commands.
+  
+  
+  
+   
