@@ -8,7 +8,7 @@ namespace ShellMe.CommandLine.Locking
 {
     class FileBasedLockingService : ILockingService
     {
-        private Dictionary<string, FileStream> _fileStreams;
+        private readonly Dictionary<string, FileStream> _fileStreams;
 
         public FileBasedLockingService()
         {
@@ -43,7 +43,6 @@ namespace ShellMe.CommandLine.Locking
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Foo");
                 //We don't care if the unlocking fails
             }
         }
