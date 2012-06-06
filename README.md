@@ -50,6 +50,6 @@ What does shell.me offer?
   We care a lot about testing. That's why we also provide you with rich testing helpers.
   For instance, we have a TestConsole that you can use to write unit tests against custom commands.
   
-  
+- it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
   
    
