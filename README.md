@@ -1,3 +1,4 @@
+
 shell.me
 ========
 
@@ -23,10 +24,15 @@ What does shell.me offer?
   say your command foo needs an int argument (e.g. BatchSize). All you've got to do is
   to add an int property ```Batchsize``` to your command. Now you can use it like this:
   ```foo --batchsize=100```. And say you also want a boolean property ```Force```. Easy!
+
   You can either say: 
-  ```foo --batchsize=100 --force``` //means force == true
-  ```foo --force=true``` //means force == true
+  ```foo --batchsize=100 --force``` //means force == true  
+  ```foo --force=true``` //means force == true  
   ```foo --force=false``` // means force == false
+  
+- it is trivially extensible. For example: We parse a lot of common types for you.
+  But if for example, you want to use the ```Point``` type as a command argument, you
+  need to give shell.me a hint. Just add a custom TypeProvider and add it to the
+  collection of built in TypeProviders. That's the way to teach shell.me new tricks!
+  After that you could use it like that for example: foo --Point={ X: 4, Y: 3} 
  
-
-
