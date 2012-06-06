@@ -50,6 +50,22 @@ What does shell.me offer?
   We care a lot about testing. That's why we also provide you with rich testing helpers.
   For instance, we have a TestConsole that you can use to write unit tests against custom commands.
   
+- it provides a way to run commands in a non interactive way. Remember when we talked about
+  using shell.me to run repetitive tasks with the OS task scheduler? You really don't wan't
+  the shell.me process to stay open when using shell.me in such a scenario. 
+  Just add ```--non-interactive``` as an argument to the command and shell.me will immediately
+  shut down after the command has finished.
+  
+- it provides a rock solid way to prevent commands from running in parallel if you don't want that to happen!
+  Let's say you schedule a command to run every 10 seconds. However, the time consumption of the command itself
+  might be hard to predict and you don't want commands to overlap themselves. The OS task scheduler (at least
+  on Windows) provides a way to avoid overlapping of tasks but it really only looks up for the process name not
+  to clash. However, if you are using shell.me to schedule a bunch of commands, you don't want to use that option
+  because you *do* want multiple instances of shell.me to overlap! You just don't want that to happen for specific
+  commands! If you don't want that to happen just add ```--allow-parallel=false``` as an argument to the command.
+  Shell.me automatically creates lock files in the shell.me directory that will prevent multiple instance of this
+  command to run in parallel.
+  
 - it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
   
    
