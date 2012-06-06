@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.Testing;
 
 namespace ShellMe.CommandLine.Tests
 {
-    public class CommandInitTests
+    public class CommandTests
     {
         [Test]
         public void CanInitializeCommand()
@@ -138,6 +139,66 @@ namespace ShellMe.CommandLine.Tests
             Assert.AreEqual("Exception: Foo", console.OutputQueue[1]);
             Assert.IsTrue(console.OutputQueue[2].StartsWith("Stacktrace:"));
             Assert.AreEqual("Exception: Bar", console.OutputQueue[3]);
+        }
+
+        [Test]
+        public void IgnoresSecondCommandBecauseItsConfiguredToNotRunInParallel()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+
+            var console2 = new TestConsole(new List<string>());
+            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand()});
+            var commandLoop2 = new CommandLoop(console2, commandFactory2);
+
+            Task.WaitAll(new[]
+                             {
+                                 Task.Factory.StartNew(() => commandLoop.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=false" })),
+                                 Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=false" }))
+                             });
+
+            Assert.AreEqual(1, console.OutputQueue.Count + console2.OutputQueue.Count);
+        }
+
+        [Test]
+        public void RunsCommandsInParallel()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+
+            var console2 = new TestConsole(new List<string>());
+            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandLoop2 = new CommandLoop(console2, commandFactory2);
+
+            Task.WaitAll(new[]
+                             {
+                                 Task.Factory.StartNew(() => commandLoop.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=true" })),
+                                 Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=true" }))
+                             });
+
+            Assert.AreEqual(2, console.OutputQueue.Count + console2.OutputQueue.Count);
+        }
+
+        [Test]
+        public void RunsCommandsInParallelBecauseAllowParallelIsDefaultedToTrue()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+
+            var console2 = new TestConsole(new List<string>());
+            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandLoop2 = new CommandLoop(console2, commandFactory2);
+
+            Task.WaitAll(new[]
+                             {
+                                 Task.Factory.StartNew(() => commandLoop.Start(new[] { "LongRunningCommand", "--nonInteractive" })),
+                                 Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive" }))
+                             });
+
+            Assert.AreEqual(2, console.OutputQueue.Count + console2.OutputQueue.Count);
         }
     }
 }

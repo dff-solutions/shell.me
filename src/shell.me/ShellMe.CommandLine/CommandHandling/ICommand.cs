@@ -8,6 +8,8 @@
 
         bool Verbose { get; set; }
 
+        bool AllowParallel { get; set; }
+
         string Name { get; }
 
         void Run();

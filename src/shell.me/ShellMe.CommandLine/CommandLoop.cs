@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ShellMe.CommandLine.CommandHandling;
+using ShellMe.CommandLine.Locking;
 
 namespace ShellMe.CommandLine
 {
@@ -8,6 +9,7 @@ namespace ShellMe.CommandLine
     {
         private readonly CommandFactory _commandFactory;
         private readonly ICommandPropertyWalker _commandPropertyWalker;
+        private readonly ILockingService _lockingService;
 
         public CommandLoop() : this(new NativeConsoleWrapper())
         {}
@@ -25,6 +27,7 @@ namespace ShellMe.CommandLine
             Console = console;
             _commandFactory = commandFactory;
             _commandPropertyWalker = commandPropertyWalker;
+            _lockingService = new FileBasedLockingService();
         }
 
         private IConsole Console { get; set; }
@@ -75,6 +78,9 @@ namespace ShellMe.CommandLine
                 if (command.Verbose)
                     Console.WriteLine("Proceeding Command: " + command.Name);
 
+                if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
+                    return false;
+
                 try
                 {
                     _commandPropertyWalker.FillCommandProperties(args, command);
@@ -94,6 +100,12 @@ namespace ShellMe.CommandLine
                     Console.ResetColor();
                     return false;
                 }
+                finally
+                {
+                    if (!command.AllowParallel)
+                        _lockingService.ReleaseLock(command.Name);
+                }
+
             }
             return false;
         }

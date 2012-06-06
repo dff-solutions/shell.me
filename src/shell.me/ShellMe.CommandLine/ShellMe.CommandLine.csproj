@@ -53,6 +53,8 @@
     <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
     <Compile Include="ExceptionWalker.cs" />
     <Compile Include="IConsole.cs" />
+    <Compile Include="Locking\FileBasedLockingService.cs" />
+    <Compile Include="Locking\ILockingService.cs" />
     <Compile Include="NativeConsoleWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
