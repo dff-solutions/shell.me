@@ -13,5 +13,6 @@ namespace ShellMe.CommandLine
         string GetPrevioseCommand();
         string GetNextCommand();
         string FindCommand(string searchstring);
+        string GetCommand();
     }
 }

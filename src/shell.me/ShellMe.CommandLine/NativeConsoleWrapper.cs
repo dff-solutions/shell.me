@@ -7,45 +7,26 @@ namespace ShellMe.CommandLine
     {
     
 
-        public NativeConsoleWrapper()
-            : this(new InMemoryCommandHistory())
-        {}
+    public NativeConsoleWrapper()
+    {}
 
-        public NativeConsoleWrapper(InMemoryCommandHistory commandHistory)
-        {
-            CommandHistory = commandHistory;
-        }
         
-        public void WriteLine(string line)
-        {
-            Console.WriteLine(line);
-        }
+    public void WriteLine(string line)
+    {
+        Console.WriteLine(line);
+    }
 
 
-        public InMemoryCommandHistory CommandHistory { get; set; }
 
-        public string ReadLine()
-            {
-                string buffer = string.Empty;
-                do
-                {
-                    while (!Console.KeyAvailable)
-                    {
-                        var keyInfo = Console.ReadKey();
-                        if (!CommandHistory.Matches.ContainsKey(keyInfo.Key))
-                        {
-                            buffer += keyInfo.KeyChar;
-                        }
-                        else
-                        {
-                            Action action = CommandHistory.Matches[keyInfo.Key];
-                            action.Invoke();
-                        }
-                    }
-                } while (Console.ReadKey(true).Key != ConsoleKey.Enter);
+    public string ReadLine()
+    {
+        return Console.ReadLine();
+    }
 
-                return buffer; // Console.ReadLine();
-            }
+    public ConsoleKeyInfo Readkey()
+    {
+        return Console.ReadKey();
+    }
 
 
     public ConsoleColor ForegroundColor

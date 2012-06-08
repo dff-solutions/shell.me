@@ -11,17 +11,10 @@ namespace ShellMe.Testing
         private readonly List<string> _commandQueue;
 
         public TestConsole(List<string> commandQueue)
-            : this(new InMemoryCommandHistory(),commandQueue)
-        {}
-
-        public TestConsole(InMemoryCommandHistory commandHistory,List<string> commandQueue)
         {
             _commandQueue = commandQueue;
             OutputQueue = new List<string>();
-            CommandHistory = commandHistory;
         }
-
-        public InMemoryCommandHistory CommandHistory { get; set; }
 
         public List<string> OutputQueue { get; private set; }
 
@@ -33,27 +26,24 @@ namespace ShellMe.Testing
         public string ReadLine()
         {
             var first = _commandQueue.First();
-            string buffer = string.Empty;
-            foreach (var character in first)
-            {
-                ConsoleKey consoleKey;
-                Enum.TryParse(new string(new[] {character}).ToUpper(), out consoleKey);
+            _commandQueue.RemoveAt(0);
+            return first;
+        }
 
-                var keyInfo = new ConsoleKeyInfo(character, consoleKey, false, false, false);
+        public ConsoleKeyInfo Readkey()
+        {
+            var first = _commandQueue.First();
+            var keyChar = string.IsNullOrEmpty(first) ? '$' : first.ToCharArray()[0];
 
-                if (!CommandHistory.Matches.ContainsKey(keyInfo.Key))
-                {
-                    buffer += keyInfo.KeyChar;
-                }
-                else
-                {
-                    Action action = CommandHistory.Matches[keyInfo.Key];
-                    action.Invoke();
-                }
-            }
+            ConsoleKey consoleKey;
+            Enum.TryParse(new string(new[] { keyChar }).ToUpper(), out consoleKey);
+            var keyInfo = new ConsoleKeyInfo(keyChar, consoleKey, false, false, false);
 
             _commandQueue.RemoveAt(0);
-            return buffer;
+            if(first.Length > 0 )
+                _commandQueue.Insert(0,first.Substring(1));
+
+            return keyInfo;
         }
 
         public ConsoleColor ForegroundColor { get; set; }

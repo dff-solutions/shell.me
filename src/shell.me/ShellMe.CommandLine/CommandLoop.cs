@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using ShellMe.CommandLine.CommandHandling;
 
 namespace ShellMe.CommandLine
@@ -8,23 +9,30 @@ namespace ShellMe.CommandLine
     {
         private readonly CommandFactory _commandFactory;
         private readonly ICommandPropertyWalker _commandPropertyWalker;
+        private readonly ICommandHistory _commandHistory;
 
-        public CommandLoop() : this(new NativeConsoleWrapper(new InMemoryCommandHistory()))
+        public CommandLoop() : this(new NativeConsoleWrapper())
         {}
 
         public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
         {
         }
 
-        public CommandLoop(IConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker())
+        public CommandLoop(IConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker(), new InMemoryCommandHistory(console))
         {
         }
 
-        public CommandLoop(IConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker)
+        public CommandLoop(IConsole console, CommandFactory commandFactory, ICommandHistory commandHistory)
+            : this(console, commandFactory, new CommandPropertyWalker(), commandHistory)
+        {
+        }
+
+        public CommandLoop(IConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker, ICommandHistory commandHistory)
         {
             Console = console;
             _commandFactory = commandFactory;
             _commandPropertyWalker = commandPropertyWalker;
+            _commandHistory = commandHistory;
 
         }
 
@@ -47,15 +55,18 @@ namespace ShellMe.CommandLine
 
             TryToProceedCommand(command, args);
 
+            var input = string.Empty;
             while (!nonInteractive && !exit)
             {
-                Console.WriteLine("Enter commands or type exit to close");
+
+                if (input != CommandStates.LastCommandWasPrintet.ToString())
+                    Console.WriteLine("Enter commands or type exit to close");
 
                 if (!nonInteractive)
                 {
-                    var input = Console.ReadLine();
+                    input = _commandHistory.GetCommand();
 
-                    if (!string.IsNullOrEmpty(input))
+                    if (!string.IsNullOrEmpty(input) && input != CommandStates.LastCommandWasPrintet.ToString())
                     {
                         if (input.ToLower() == "exit")
                             exit = true;

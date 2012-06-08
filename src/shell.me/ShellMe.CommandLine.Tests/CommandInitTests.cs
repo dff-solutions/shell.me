@@ -143,24 +143,19 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void ReturnsLastCommandOnArrowUp()
         {
-            var console = new TestConsole(new List<string>() { "test", "exit" });
+            //System.ConsoleKey.UpArrow.ToString() represented as "<" in tests
+            var console = new TestConsole(new List<string>() { "test", "<", "exit" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
-            var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "test" });
+            var commandLoop = new CommandLoop(console, commandFactory,new TestCommandHistory(console) );
+            commandLoop.Start(new[] { "test", "<", "exit" });
 
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
-            Assert.AreEqual(4, console.OutputQueue.Count);
+            Assert.AreEqual("test", console.OutputQueue[4]);
+            Assert.AreEqual(5, console.OutputQueue.Count);
 
-            commandLoop.Start(new[] { System.ConsoleKey.UpArrow.ToString() });
-
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
-            Assert.AreEqual(4, console.OutputQueue.Count);
 
 
         }

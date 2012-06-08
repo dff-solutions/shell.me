@@ -1,34 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace ShellMe.CommandLine
 {
-    public enum CommandStates
-    {
-        None = 0,
-        LastCommandWasPrintet = 1
-    }
-
-    public  class InMemoryCommandHistory : ICommandHistory
+    public  class TestCommandHistory : ICommandHistory
     {
         private readonly List<string> _commandHistory = new List<string>();
         private int _currentCommandIndex = 0;
-        private Dictionary<ConsoleKey, Action> _matches;
+        private Dictionary<char, Action> _matches;
         private IConsole _console;
 
-        public InMemoryCommandHistory(IConsole console)
+
+
+        public TestCommandHistory(IConsole console)
         {
             _console = console;
-            _matches = new Dictionary<ConsoleKey, Action>
+            _matches = new Dictionary<char, Action>
                            {
-                               { ConsoleKey.UpArrow , () => GetPrevioseCommand() },
-                               { ConsoleKey.DownArrow , () => GetNextCommand() }
+                               { '<', () => GetPrevioseCommand() },
+                               { '>', () => GetNextCommand() }
                            };
         }
 
-        public Dictionary<ConsoleKey, Action> Matches
+        public Dictionary<char, Action> Matches
         {
             get { return _matches; }
             set { _matches = value; }
@@ -51,13 +48,20 @@ namespace ShellMe.CommandLine
 
         public string GetPrevioseCommand()
         {
-            if(_currentCommandIndex < _commandHistory.Count)
+            var ret = string.Empty;
+            if (_currentCommandIndex < _commandHistory.Count)
+            {
+
+                ret = _commandHistory[_currentCommandIndex];
                 _currentCommandIndex++;
+            }
             else
             {
+                ret = _commandHistory[_currentCommandIndex];
                 _currentCommandIndex = _commandHistory.Count - 1;
             }
-            return _commandHistory[_currentCommandIndex];
+            _console.WriteLine(ret);
+            return ret;
         }
 
         public string GetNextCommand()
@@ -89,9 +93,9 @@ namespace ShellMe.CommandLine
                 {
                     comandEnd = true;
                 }
-                else if (Matches.ContainsKey(keyInfo.Key))
+                else if (Matches.ContainsKey(keyInfo.KeyChar))
                 {
-                    Action action = Matches[keyInfo.Key];
+                    var action = Matches[keyInfo.KeyChar];
                     action.Invoke();
                     comandEnd = true;
                     buffer = CommandStates.LastCommandWasPrintet.ToString();
@@ -102,10 +106,9 @@ namespace ShellMe.CommandLine
                     currentIndexOfLine++;
                 }
             }
-            if (buffer != CommandStates.LastCommandWasPrintet.ToString() && buffer != string.Empty)
+            if (buffer != CommandStates.LastCommandWasPrintet.ToString() && buffer != string.Empty) 
                 SaveCommand(buffer);
             return buffer;
         }
-
     }
 }
