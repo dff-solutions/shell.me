@@ -7,7 +7,7 @@ namespace ShellMe.Testing
     {
         public override string Name
         {
-            get { return "Test"; }
+            get { return "UnknownProperty"; }
         }
 
         public override void Run()
