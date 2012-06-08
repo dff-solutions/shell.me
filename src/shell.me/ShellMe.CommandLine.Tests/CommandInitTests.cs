@@ -139,5 +139,30 @@ namespace ShellMe.CommandLine.Tests
             Assert.IsTrue(console.OutputQueue[2].StartsWith("Stacktrace:"));
             Assert.AreEqual("Exception: Bar", console.OutputQueue[3]);
         }
+
+        [Test]
+        public void ReturnsLastCommandOnArrowUp()
+        {
+            var console = new TestConsole(new List<string>() { "test", "exit", "--test" });
+            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "test", "--IsTest" });
+
+            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
+            Assert.AreEqual(4, console.OutputQueue.Count);
+
+            commandLoop.Start(new[] { System.ConsoleKey.UpArrow.ToString() });
+
+            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
+            Assert.AreEqual(4, console.OutputQueue.Count);
+
+
+        }
     }
 }

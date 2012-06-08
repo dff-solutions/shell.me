@@ -52,7 +52,9 @@
     <Compile Include="CommandHandling\ICommand.cs" />
     <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
     <Compile Include="ExceptionWalker.cs" />
+    <Compile Include="ICommandHistory.cs" />
     <Compile Include="IConsole.cs" />
+    <Compile Include="InMemoryCommandHistory.cs" />
     <Compile Include="NativeConsoleWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,6 +6,7 @@ namespace ShellMe.CommandLine
     {
         void WriteLine(string line);
         string ReadLine();
+        //ConsoleKeyInfo Readkey();
         ConsoleColor ForegroundColor { get; set; }
         void ResetColor();
     }

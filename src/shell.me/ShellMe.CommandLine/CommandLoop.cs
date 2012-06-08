@@ -9,7 +9,7 @@ namespace ShellMe.CommandLine
         private readonly CommandFactory _commandFactory;
         private readonly ICommandPropertyWalker _commandPropertyWalker;
 
-        public CommandLoop() : this(new NativeConsoleWrapper())
+        public CommandLoop() : this(new NativeConsoleWrapper(new InMemoryCommandHistory()))
         {}
 
         public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
@@ -25,9 +25,12 @@ namespace ShellMe.CommandLine
             Console = console;
             _commandFactory = commandFactory;
             _commandPropertyWalker = commandPropertyWalker;
+
         }
 
         private IConsole Console { get; set; }
+
+
 
         public void Start(string[] args)
         {
