@@ -38,7 +38,8 @@ namespace ShellMe.CommandLine
                         }
                         else
                         {
-                            
+                            Action action = CommandHistory.Matches[keyInfo.Key];
+                            action.Invoke();
                         }
                     }
                 } while (Console.ReadKey(true).Key != ConsoleKey.Enter);

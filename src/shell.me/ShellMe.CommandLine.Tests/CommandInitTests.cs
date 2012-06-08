@@ -143,12 +143,12 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void ReturnsLastCommandOnArrowUp()
         {
-            var console = new TestConsole(new List<string>() { "test", "exit", "--test" });
+            var console = new TestConsole(new List<string>() { "test", "exit" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "test", "--IsTest" });
+            commandLoop.Start(new[] { "test" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
@@ -156,7 +156,7 @@ namespace ShellMe.CommandLine.Tests
 
             commandLoop.Start(new[] { System.ConsoleKey.UpArrow.ToString() });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
