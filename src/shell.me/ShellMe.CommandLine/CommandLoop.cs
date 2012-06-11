@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.CommandLine.Locking;
 
@@ -39,13 +41,19 @@ namespace ShellMe.CommandLine
 
             if (command != null)
             {
-                _commandPropertyWalker.FillCommandProperties(args, command);
+                try
+                {
+                    _commandPropertyWalker.FillCommandProperties(args, command);
+                    TryToProceedCommand(command, args);
+                }
+                catch (Exception exception)
+                {
+                    LogException(new TraceConsole(Console,command), exception, command);
+                }
             }
 
             var nonInteractive = command != null && command.NonInteractive;
             var exit = false;
-
-            TryToProceedCommand(command, args);
 
             while (!nonInteractive && !exit)
             {
@@ -75,29 +83,25 @@ namespace ShellMe.CommandLine
         {
             if (command != null)
             {
-                if (command.Verbose)
-                    Console.WriteLine("Proceeding Command: " + command.Name);
-
-                if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
-                    return false;
-
+                ITraceConsole traceConsole = null;
                 try
                 {
                     _commandPropertyWalker.FillCommandProperties(args, command);
-                    command.Console = Console;
+                    traceConsole = new TraceConsole(Console, command);
+                
+                    if (command.Verbose)
+                        traceConsole.TraceEvent(TraceEventType.Verbose, 0, "Proceeding Command: " + command.Name);
+
+                    if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
+                        return false;
+
+                    command.Console = traceConsole;
                     command.Run();
                     return true;
                 }
                 catch (Exception exception)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unexpected error happended while proceeding the command: " + command.Name);
-                    var exceptionWalker = new ExceptionWalker(exception);
-                    foreach (var message in exceptionWalker.GetExceptionMessages())
-                    {
-                        Console.WriteLine(message);
-                    }
-                    Console.ResetColor();
+                    LogException(traceConsole, exception, command);
                     return false;
                 }
                 finally
@@ -108,6 +112,45 @@ namespace ShellMe.CommandLine
 
             }
             return false;
+        }
+
+        private void LogException(IConsole console, Exception exception, ICommand command)
+        {
+            if (console == null)
+                console = Console;
+
+            var traceconsole = console as TraceConsole;
+            console.ForegroundColor = ConsoleColor.Red;
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("Unexpected error happended while proceeding the command: " + command.Name);
+            var exceptionWalker = new ExceptionWalker(exception);
+            foreach (var message in exceptionWalker.GetExceptionMessages())
+            {
+                stringBuilder.AppendLine(message);
+            }
+
+            if(traceconsole != null)
+            {
+                //If we have a TraceConsole, trace as error, otherwise use the default Console
+                try
+                {
+                    traceconsole.TraceEvent(TraceEventType.Error, 0, stringBuilder.ToString());
+                }
+                catch (Exception ex)
+                {
+                    //In case of any errors regardings the tracing (e.g. missing FileWrite rights) use 
+                    //the default console and log this exception as well
+                    Console.WriteLine(stringBuilder.ToString());
+                    LogException(Console, ex, command);
+                }
+                
+            }
+            else
+            {
+                Console.WriteLine(stringBuilder.ToString());
+            }
+
+            console.ResetColor();
         }
     }
 }
