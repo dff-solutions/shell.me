@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.CommandLine.Locking;
 
@@ -75,29 +77,34 @@ namespace ShellMe.CommandLine
         {
             if (command != null)
             {
-                if (command.Verbose)
-                    Console.WriteLine("Proceeding Command: " + command.Name);
-
-                if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
-                    return false;
-
+                ITraceConsole traceConsole = null;
                 try
                 {
                     _commandPropertyWalker.FillCommandProperties(args, command);
-                    command.Console = Console;
+                    traceConsole = new TraceConsole(Console, command);
+                
+                    if (command.Verbose)
+                        Console.WriteLine("Proceeding Command: " + command.Name);
+
+                    if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
+                        return false;
+
+                    command.Console = traceConsole;
                     command.Run();
                     return true;
                 }
                 catch (Exception exception)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unexpected error happended while proceeding the command: " + command.Name);
+                    traceConsole.ForegroundColor = ConsoleColor.Red;
+                    var stringBuilder = new StringBuilder();
+                    stringBuilder.AppendLine("Unexpected error happended while proceeding the command: " + command.Name);
                     var exceptionWalker = new ExceptionWalker(exception);
                     foreach (var message in exceptionWalker.GetExceptionMessages())
                     {
-                        Console.WriteLine(message);
+                        stringBuilder.AppendLine(message);
                     }
-                    Console.ResetColor();
+                    traceConsole.TraceEvent(TraceEventType.Error, 0, stringBuilder.ToString());
+                    traceConsole.ResetColor();
                     return false;
                 }
                 finally
