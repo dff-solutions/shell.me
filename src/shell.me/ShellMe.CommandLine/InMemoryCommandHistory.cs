@@ -5,10 +5,11 @@ using System.Text;
 
 namespace ShellMe.CommandLine
 {
-    public enum CommandStates
+
+    public class TextBuffer
     {
-        None = 0,
-        LastCommandWasPrintet = 1
+        public bool FromHistory { get; set; }
+        public string BufferText { get; set; }
     }
 
     public  class InMemoryCommandHistory : ICommandHistory
@@ -17,13 +18,16 @@ namespace ShellMe.CommandLine
         private int _currentCommandIndex = 0;
         private Dictionary<ConsoleKey, Action> _matches;
         private IConsole _console;
+        public List<string> _up = new List<string>();
+        public List<string> _down = new List<string>();
+        public TextBuffer Buffer = new TextBuffer{BufferText = string.Empty,FromHistory = false};
 
         public InMemoryCommandHistory(IConsole console)
         {
             _console = console;
             _matches = new Dictionary<ConsoleKey, Action>
                            {
-                               { ConsoleKey.UpArrow , () => GetPrevioseCommand() },
+                               { ConsoleKey.UpArrow , () => GetPreviousCommand() },
                                { ConsoleKey.DownArrow , () => GetNextCommand() }
                            };
         }
@@ -36,7 +40,7 @@ namespace ShellMe.CommandLine
 
         public void SaveCommand(string command)
         {
-            _commandHistory.Add(command);
+            _up.Add(command);
         }
 
         public int GetCurrentCommandIndex()
@@ -49,62 +53,72 @@ namespace ShellMe.CommandLine
             return _commandHistory[_commandHistory.Count - 1];
         }
 
-        public string GetPrevioseCommand()
+        public string GetPreviousCommand()
         {
-            if(_currentCommandIndex < _commandHistory.Count)
-                _currentCommandIndex++;
-            else
-            {
-                _currentCommandIndex = _commandHistory.Count - 1;
-            }
-            return _commandHistory[_currentCommandIndex];
+            if (_up.Count == 0) return "";
+
+            var cmd = _up.Last();
+            _down.Add(cmd);
+            _console.Clear();
+            _console.Write(cmd.ToCharArray());
+            Buffer.BufferText = cmd;
+            Buffer.FromHistory = true;
+            _up.RemoveAt(_up.Count-1);
+            return cmd;
         }
 
         public string GetNextCommand()
         {
-            if (_currentCommandIndex != 0)
-                _currentCommandIndex--;
-            else
-                _currentCommandIndex = 0;
-
-            return _commandHistory[_currentCommandIndex];
-        }
-
-        public string FindCommand(string searchstring)
-        {
-            return _commandHistory
-                        .FirstOrDefault(cmd => cmd.Contains(searchstring));
+            if (_down.Count == 0) return "";
+            
+            var cmd = _down.Last();
+            _up.Add(cmd);
+            _console.Clear();
+            _console.Write(cmd.ToCharArray());
+            Buffer.BufferText = cmd;
+            Buffer.FromHistory = true;
+            _down.RemoveAt(_down.Count - 1);
+            return cmd;
         }
 
         public string GetCommand()
         {
             bool comandEnd = false;
-            string buffer = string.Empty;
-            int currentIndexOfLine = 0;
 
+            int currentIndexOfLine = 0;
+            var buffer = string.Empty;
+            Buffer = new TextBuffer() {BufferText = string.Empty, FromHistory = false};
             while (!comandEnd)
             {
                 var keyInfo = _console.Readkey();
                 if (keyInfo.Key == ConsoleKey.Enter || keyInfo.KeyChar == '$')
                 {
+                    buffer = Buffer.BufferText;
                     comandEnd = true;
                 }
                 else if (Matches.ContainsKey(keyInfo.Key))
                 {
                     Action action = Matches[keyInfo.Key];
                     action.Invoke();
-                    comandEnd = true;
-                    buffer = CommandStates.LastCommandWasPrintet.ToString();
                 }
                 else
                 {
-                    buffer += keyInfo.KeyChar;
+                    Buffer.BufferText += keyInfo.KeyChar;
+                    Buffer.FromHistory = false;
                     currentIndexOfLine++;
                 }
             }
-            if (buffer != CommandStates.LastCommandWasPrintet.ToString() && buffer != string.Empty)
+            if (!Buffer.FromHistory && buffer != string.Empty)
                 SaveCommand(buffer);
-            return buffer;
+
+            // down reversen und append to up
+            _down.Reverse();
+            _up.AddRange(_down);
+            _down.Clear();
+            if (Buffer.FromHistory)
+                return Buffer.BufferText.Replace("\b", "").Replace("\0", "");
+            else
+                return buffer.Replace("\b", "").Replace("\0", "");
         }
 
     }

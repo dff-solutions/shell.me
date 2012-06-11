@@ -3,33 +3,38 @@ using System.Collections.Generic;
 
 
 namespace ShellMe.CommandLine
-{public class NativeConsoleWrapper : IConsole
+{
+    public class NativeConsoleWrapper : IConsole
     {
-    
 
-    public NativeConsoleWrapper()
-    {}
+        public void WriteLine(string line)
+        {
+            Console.WriteLine(line);
+        }
 
-        
-    public void WriteLine(string line)
-    {
-        Console.WriteLine(line);
-    }
+        public void Write(char[] line)
+        {
+            Console.Write(line);
+        }
 
-
-
-    public string ReadLine()
-    {
-        return Console.ReadLine();
-    }
-
-    public ConsoleKeyInfo Readkey()
-    {
-        return Console.ReadKey();
-    }
+        public void Clear()
+        {
+            Console.Clear();
+        }
 
 
-    public ConsoleColor ForegroundColor
+        public string ReadLine()
+        {
+            return Console.ReadLine();
+        }
+
+        public ConsoleKeyInfo Readkey()
+        {
+            return Console.ReadKey();
+        }
+
+
+        public ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
             set
@@ -42,5 +47,6 @@ namespace ShellMe.CommandLine
         {
             Console.ResetColor();
         }
+
     }
 }

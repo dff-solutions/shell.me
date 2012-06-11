@@ -146,17 +146,15 @@ namespace ShellMe.CommandLine.Tests
             //System.ConsoleKey.UpArrow.ToString() represented as "<" in tests
             var console = new TestConsole(new List<string>() { "test", "<", "exit" });
             var commandFactory = new CommandFactory(new[] { new TestCommand() });
-            var commandLoop = new CommandLoop(console, commandFactory,new TestCommandHistory(console) );
+            var commandLoop = new CommandLoop(console, commandFactory,new InMemoryCommandHistory(console) );
             commandLoop.Start(new[] { "test", "<", "exit" });
 
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
             Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
-            Assert.AreEqual("test", console.OutputQueue[4]);
+            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[4]);
             Assert.AreEqual(5, console.OutputQueue.Count);
-
-
 
         }
     }

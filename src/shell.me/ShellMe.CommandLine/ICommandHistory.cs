@@ -10,9 +10,8 @@ namespace ShellMe.CommandLine
         void   SaveCommand(string command);
         int GetCurrentCommandIndex();
         string GetLastCommand();
-        string GetPrevioseCommand();
+        string GetPreviousCommand();
         string GetNextCommand();
-        string FindCommand(string searchstring);
         string GetCommand();
     }
 }

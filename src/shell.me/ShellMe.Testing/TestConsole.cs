@@ -23,6 +23,16 @@ namespace ShellMe.Testing
             OutputQueue.Add(line);
         }
 
+        public void Write(char[] line)
+        {
+            OutputQueue.Add(line.ToString());
+        }
+
+        public void Clear()
+        {
+            OutputQueue.RemoveAt(OutputQueue.Count-1);
+        }
+
         public string ReadLine()
         {
             var first = _commandQueue.First();

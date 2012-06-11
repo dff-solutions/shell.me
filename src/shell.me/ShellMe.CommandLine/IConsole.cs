@@ -5,6 +5,8 @@ namespace ShellMe.CommandLine
     public interface IConsole
     {
         void WriteLine(string line);
+        void Write(char[] line);
+        void Clear();
         string ReadLine();
         ConsoleKeyInfo Readkey();
         ConsoleColor ForegroundColor { get; set; }

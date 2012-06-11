@@ -56,17 +56,16 @@ namespace ShellMe.CommandLine
             TryToProceedCommand(command, args);
 
             var input = string.Empty;
+            //Console.WriteLine("Enter commands or type exit to close");
             while (!nonInteractive && !exit)
             {
 
-                if (input != CommandStates.LastCommandWasPrintet.ToString())
-                    Console.WriteLine("Enter commands or type exit to close");
+                Console.WriteLine("Enter commands or type exit to close");
 
                 if (!nonInteractive)
                 {
                     input = _commandHistory.GetCommand();
-
-                    if (!string.IsNullOrEmpty(input) && input != CommandStates.LastCommandWasPrintet.ToString())
+                    if (!string.IsNullOrEmpty(input) )
                     {
                         if (input.ToLower() == "exit")
                             exit = true;
