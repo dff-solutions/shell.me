@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ShellMe.CommandLine.CommandHandling;
@@ -29,6 +30,19 @@ namespace ShellMe.CommandLine.Tests
 
             var commandLoop = new CommandLoop(console, commandFactory);
             Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test" }));
+        }
+
+        [Test]
+        public void MaliciousCommandWontTakeShellMeDown()
+        {
+            var console = new TestConsole(new List<string>(){"exit"});
+            var commandFactory = new CommandFactory(new ICommand[] { new MaliciousCommand() });
+
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] {"malicious", " --value=4", "--non-interactive"});
+            Assert.AreEqual(2, console.OutputQueue.Count);
+            Assert.True(console.OutputQueue[0].StartsWith("Unexpected error happended while proceeding the command: Malicious"));
+            
         }
 
         [Test]
@@ -148,11 +162,7 @@ namespace ShellMe.CommandLine.Tests
             var commandFactory = new CommandFactory(new[] { new ExceptionCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
-
-            Assert.AreEqual("Unexpected error happended while proceeding the command: RaiseException", console.OutputQueue[0]);
-            Assert.AreEqual("Exception: Foo", console.OutputQueue[1]);
-            Assert.IsTrue(console.OutputQueue[2].StartsWith("Stacktrace:"));
-            Assert.AreEqual("Exception: Bar", console.OutputQueue[3]);
+            Assert.IsTrue(console.OutputQueue[0].StartsWith("Unexpected error happended while proceeding the command: RaiseException"));
         }
 
         [Test]
