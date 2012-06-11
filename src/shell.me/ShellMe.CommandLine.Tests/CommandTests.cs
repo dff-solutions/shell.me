@@ -88,12 +88,26 @@ namespace ShellMe.CommandLine.Tests
         }
 
         [Test]
+        public void InterpretsEnumerableIntArgumentAssignment()
+        {
+            var console = new TestConsole(new List<string>());
+            var commandFactory = new CommandFactory(new[] { new EnumerableIntPropertyCommand() });
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "EnumerableInt", "--Values = [1,2, 3,4] ", "--nonInteractive" });
+
+            Assert.AreEqual("1", console.OutputQueue[0]);
+            Assert.AreEqual("2", console.OutputQueue[1]);
+            Assert.AreEqual("3", console.OutputQueue[2]);
+            Assert.AreEqual("4", console.OutputQueue[3]);
+        }
+
+        [Test]
         public void IgnoresUnsupportedPropertyTypes()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new UnknownPropertyCommand(),  });
+            var commandFactory = new CommandFactory(new[] { new UnknownPropertyCommand() });
             var commandLoop = new CommandLoop(console, commandFactory);
-            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "test", "--Size = {X: 5, Y: 10 } ", "--nonInteractive" }));
+            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "UnknownProperty", "--Size = {X: 5, Y: 10 } ", "--nonInteractive" }));
         }
 
         [Test]

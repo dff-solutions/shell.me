@@ -12,24 +12,31 @@ namespace ShellMe.CommandLine.CommandHandling
 
     public class CommandPropertyWalker : ICommandPropertyWalker
     {
-        public Dictionary<string, Func<CommandArgument, object>> TypeProviders { get; private set; } 
+        public Dictionary<Type, Func<CommandArgument, object>> TypeProviders { get; private set; } 
 
         public CommandPropertyWalker()
         {
-            TypeProviders = new Dictionary<string, Func<CommandArgument, object>>();
+            TypeProviders = new Dictionary<Type, Func<CommandArgument, object>>();
             
-            TypeProviders.Add("System.Boolean", arg => arg.Value == null 
+            TypeProviders.Add(typeof(bool), arg => arg.Value == null 
                 || arg.Value.Equals("true", StringComparison.OrdinalIgnoreCase)
                 || arg.Value.Equals("1", StringComparison.OrdinalIgnoreCase));
 
-            TypeProviders.Add("System.String", arg => arg.Value);
+            TypeProviders.Add(typeof(string), arg => arg.Value);
 
-            TypeProviders.Add("System.Int32", arg =>
-                                                  {
-                                                      int value;
-                                                      int.TryParse(arg.Value, out value);
-                                                      return value;
-                                                  });
+            Func<string,int> saveConvertToInt = arg => {
+                                                           int value;
+                                                           int.TryParse(arg, out value);
+                                                           return value;
+                                                       };
+
+            TypeProviders.Add(typeof(int), arg => saveConvertToInt(arg.Value));
+
+            TypeProviders.Add(typeof(IEnumerable<int>),arg => arg.Value
+                                                                  .Replace("[", "")
+                                                                  .Replace("]", "")
+                                                                  .Split(',')
+                                                                  .Select(saveConvertToInt));
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
@@ -41,9 +48,9 @@ namespace ShellMe.CommandLine.CommandHandling
                     
                     var arg = GetArgument(arguments, argument.Name);
 
-                    if (arg != null && TypeProviders.ContainsKey(argument.PropertyType.FullName))
+                    if (arg != null && TypeProviders.ContainsKey(argument.PropertyType))
                     {
-                        var value = TypeProviders[argument.PropertyType.FullName](arg);
+                        var value = TypeProviders[argument.PropertyType](arg);
                         Impromptu.InvokeSet(command, argument.Name, value);
                     }
                 }
