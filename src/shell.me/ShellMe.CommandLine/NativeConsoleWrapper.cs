@@ -14,12 +14,25 @@ namespace ShellMe.CommandLine
 
         public void Write(char[] line)
         {
+            Clear();
             Console.Write(line);
         }
 
         public void Clear()
         {
-            Console.Clear();
+            int curTop = Console.CursorTop;
+            int curLeft = Console.CursorLeft;
+            int height = 1;
+            int x = 0;
+            int y = Console.CursorTop;
+            int width = Console.BufferWidth;
+            
+            for (; height > 0; )
+            {
+                Console.SetCursorPosition(x, y + --height);
+                Console.Write(new string(' ', width));
+            }
+            Console.SetCursorPosition(0, curTop);
         }
 
 
