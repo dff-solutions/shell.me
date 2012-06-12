@@ -66,6 +66,13 @@ What does shell.me offer?
   Shell.me automatically creates lock files in the shell.me directory that will prevent multiple instance of this
   command to run in parallel.
   
-- it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
+- It provides rich tracing features!
+  We made things really easy for you. If you derive from BaseCommand you get all the rich tracing features
+  from System.Diagnostic for free! In addition, you don't have to gamble with an app.config.xml file. If you like to log
+  to the file system use ```--writeFile=foo.log``` and if you like to write to the system event log use ```--writeEventLog```.
+  You can either leave the ```LogLevel``` untouched or set it globally (read: for File and EventLog) with
+  e.g. ```--LogLevel=[Information, ActivityTracing]``` or use ```--FileLogLevel=[Error]``` and ```--EventLogLevel=[Information]```
+  seperatly.
   
-   
+  - it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
+ 
