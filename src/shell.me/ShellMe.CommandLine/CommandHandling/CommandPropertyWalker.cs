@@ -45,7 +45,6 @@ namespace ShellMe.CommandLine.CommandHandling
                                                                            .Split(',')
                                                                            .Select(enumString =>
                                                                                        {
-                                                                                           var temp = arg;
                                                                                            SourceLevels level;
                                                                                            Enum.TryParse(enumString, true, out level);
                                                                                            return level;

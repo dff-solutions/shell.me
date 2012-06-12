@@ -23,18 +23,22 @@ namespace ShellMe.CommandLine
                                   {
                                       Switch = new SourceSwitch(Command.Name)
                                                    {
-                                                       Level = GetLevel(TraceableCommand.LogLevel)
+                                                       Level = SourceLevels.All
                                                    }
                                   };
 
 
                 if (!string.IsNullOrEmpty(TraceableCommand.WriteFile))
                 {
-                    TraceSource.Listeners.Add(new TextWriterTraceListener(TraceableCommand.WriteFile));
+                    var listener = new TextWriterTraceListener(TraceableCommand.WriteFile);
+                    listener.Filter = new EventTypeFilter(!TraceableCommand.FileLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.FileLogLevel));
+                    TraceSource.Listeners.Add(listener);
                 }
                 if (TraceableCommand.WriteEventLog)
                 {
-                    TraceSource.Listeners.Add(new EventLogTraceListener(Command.Name));
+                    var listener = new EventLogTraceListener(Command.Name);
+                    listener.Filter = new EventTypeFilter(!TraceableCommand.EventLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.EventLogLevel));
+                    TraceSource.Listeners.Add(listener);
                 }
             }
         }
