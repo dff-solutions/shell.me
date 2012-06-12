@@ -7,12 +7,15 @@ using ShellMe.CommandLine.CommandHandling;
 
 namespace ShellMe.CommandLine
 {
-    class TraceConsole : ITraceConsole
-    { 
+    class TraceConsole : ITraceConsole, IDisposable
+    {
+        private readonly IList<IDisposable> _disposables;
+
         public TraceConsole(IConsole console, ICommand command)
         {
             Console = console;
             Command = command;
+            _disposables = new List<IDisposable>();
 
             TraceableCommand = command as ITraceableCommand;
 
@@ -33,12 +36,14 @@ namespace ShellMe.CommandLine
                     var listener = new TextWriterTraceListener(TraceableCommand.WriteFile);
                     listener.Filter = new EventTypeFilter(!TraceableCommand.FileLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.FileLogLevel));
                     TraceSource.Listeners.Add(listener);
+                    _disposables.Add(listener);
                 }
                 if (TraceableCommand.WriteEventLog)
                 {
                     var listener = new EventLogTraceListener(Command.Name);
                     listener.Filter = new EventTypeFilter(!TraceableCommand.EventLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.EventLogLevel));
                     TraceSource.Listeners.Add(listener);
+                    _disposables.Add(listener);
                 }
             }
         }
@@ -96,6 +101,14 @@ namespace ShellMe.CommandLine
 
             if(TraceableCommand != null)
                 TraceSource.TraceEvent(traceEventType, code, message);
+        }
+
+        public void Dispose()
+        {
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
         }
     }
 }

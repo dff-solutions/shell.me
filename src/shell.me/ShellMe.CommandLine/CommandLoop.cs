@@ -116,6 +116,10 @@ namespace ShellMe.CommandLine
                 {
                     if (!command.AllowParallel)
                         _lockingService.ReleaseLock(command.Name);
+
+                    var disposable = traceConsole as IDisposable;
+                    if (disposable != null)
+                        disposable.Dispose();
                 }
 
             }
