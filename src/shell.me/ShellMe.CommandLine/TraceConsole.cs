@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ShellMe.CommandLine.CommandHandling;
@@ -33,7 +34,15 @@ namespace ShellMe.CommandLine
 
                 if (!string.IsNullOrEmpty(TraceableCommand.WriteFile))
                 {
-                    var listener = new TextWriterTraceListener(TraceableCommand.WriteFile);
+                    var fileName = string.Format(TraceableCommand.WriteFile.Replace("{", "{0:"),DateTime.Now);
+
+                    var fileInfo = new FileInfo(fileName);
+                    if (fileInfo.Directory != null && !fileInfo.Directory.Exists)
+                    {
+                        fileInfo.Directory.Create();
+                    }
+
+                    var listener = new TextWriterTraceListener(fileName);
                     listener.Filter = new EventTypeFilter(!TraceableCommand.FileLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.FileLogLevel));
                     TraceSource.Listeners.Add(listener);
                     _disposables.Add(listener);
