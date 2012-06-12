@@ -72,7 +72,7 @@ What does shell.me offer?
   to the file system use ```--writeFile=foo.log``` and if you like to write to the system event log use ```--writeEventLog```.
   You can either leave the ```LogLevel``` untouched or set it globally (read: for File and EventLog) with
   e.g. ```--LogLevel=[Information, ActivityTracing]``` or use ```--FileLogLevel=[Error]``` and ```--EventLogLevel=[Information]```
-  seperatly.
+  seperatly. Make sure you read up about all the different Levels: http://msdn.microsoft.com/de-de/library/system.diagnostics.sourcelevels.aspx
   
   - it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
  
