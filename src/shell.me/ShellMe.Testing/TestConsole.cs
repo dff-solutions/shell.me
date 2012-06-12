@@ -61,5 +61,15 @@ namespace ShellMe.Testing
         public void ResetColor()
         {
         }
+
+        public int GetCursorPositionTop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetCursorPositionLeft()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace ShellMe.CommandLine
         ConsoleKeyInfo Readkey();
         ConsoleColor ForegroundColor { get; set; }
         void ResetColor();
+        int GetCursorPositionTop();
+        int GetCursorPositionLeft();
     }
 }

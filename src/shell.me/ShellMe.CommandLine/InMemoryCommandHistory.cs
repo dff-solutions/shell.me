@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -81,13 +82,59 @@ namespace ShellMe.CommandLine
             return cmd;
         }
 
+        public Dictionary<int, char> GetCommandAfterHistory()
+        {
+            bool comandEnd = false;
+            var buffer = string.Empty;
+            var dict = new Dictionary<int, char>();
+            while (!comandEnd)
+            {
+                var keyInfo = _console.Readkey();
+                if (keyInfo.Key == ConsoleKey.Enter || keyInfo.KeyChar == '$')
+                {
+                    ////buffer = _console.Read();  An dieser Stelle sollten 
+                    //buffer = Buffer.BufferText;
+                    comandEnd = true;
+                }
+                else if (Matches.ContainsKey(keyInfo.Key))
+                {
+                    Action action = Matches[keyInfo.Key];
+                    action.Invoke();
+                    dict = GetCommandAfterHistory();
+                }
+                else if (keyInfo.Key != ConsoleKey.LeftArrow && keyInfo.Key != ConsoleKey.RightArrow)
+                {
+                    dict.Add(_console.GetCursorPositionLeft(),keyInfo.KeyChar);
+                }
+            }
+            return dict;
+        }
+
+        public string MergeBufferEdit(TextBuffer buffer,Dictionary<int, char> dict )
+        {
+            var ca = buffer.BufferText.ToCharArray();
+            foreach (var v in dict)
+            {
+                if(v.Key > ca.Length-1)
+                {
+                    var diff = v.Key - ca.Length - 1;
+                }else
+                {
+                    ca[v.Key] = v.Value;
+                }
+            }
+
+            return ca.ToString();
+        }
+
         public string GetCommand()
         {
             bool comandEnd = false;
 
+
             int currentIndexOfLine = 0;
             var buffer = string.Empty;
-            Buffer = new TextBuffer() {BufferText = string.Empty, FromHistory = false};
+            Buffer = new TextBuffer {BufferText = string.Empty, FromHistory = false};
             while (!comandEnd)
             {
                 var keyInfo = _console.Readkey();
@@ -100,8 +147,11 @@ namespace ShellMe.CommandLine
                 {
                     Action action = Matches[keyInfo.Key];
                     action.Invoke();
+
+                    //Buffer.BufferText = GetCommandAfterHistory();
+                    //Buffer.BufferText = MergeBufferEdit(Buffer, GetCommandAfterHistory());
                 }
-                else
+                else if (keyInfo.Key != ConsoleKey.LeftArrow && keyInfo.Key != ConsoleKey.RightArrow)
                 {
                     Buffer.BufferText += keyInfo.KeyChar;
                     Buffer.FromHistory = false;
@@ -111,7 +161,7 @@ namespace ShellMe.CommandLine
             if (!Buffer.FromHistory && buffer != string.Empty)
                 SaveCommand(buffer);
 
-            // down reversen und append to up
+            // _down reversen and append to _up
             _down.Reverse();
             _up.AddRange(_down);
             _down.Clear();

@@ -16,12 +16,12 @@ namespace ShellMe.CommandLine
         {
             Clear();
             Console.Write(line);
+            Console.SetCursorPosition(line.Length, Console.CursorTop);
         }
 
         public void Clear()
         {
             int curTop = Console.CursorTop;
-            int curLeft = Console.CursorLeft;
             int height = 1;
             int x = 0;
             int y = Console.CursorTop;
@@ -61,5 +61,14 @@ namespace ShellMe.CommandLine
             Console.ResetColor();
         }
 
+        public int GetCursorPositionTop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetCursorPositionLeft()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
