@@ -59,14 +59,8 @@ namespace ShellMe.CommandLine.CommandHandling
             {
                 return assembly
                     .GetTypes()
-                    .Where(type =>
-                               {
-                                   return type.IsClass;
-                               })
-                    .Where(type =>
-                               {
-                                   return type.GetInterface("ShellMe.CommandLine.CommandHandling.ICommand") != null;
-                               })
+                    .Where(type => type.IsClass)
+                    .Where(type => type.GetInterface("ShellMe.CommandLine.CommandHandling.ICommand") != null)
                     .Select(type =>
                                 {
                                     try
