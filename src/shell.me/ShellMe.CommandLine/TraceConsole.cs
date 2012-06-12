@@ -30,11 +30,15 @@ namespace ShellMe.CommandLine
 
                 if (!string.IsNullOrEmpty(TraceableCommand.WriteFile))
                 {
-                    TraceSource.Listeners.Add(new TextWriterTraceListener(TraceableCommand.WriteFile));
+                    var listener = new TextWriterTraceListener(TraceableCommand.WriteFile);
+                    listener.Filter = new EventTypeFilter(!TraceableCommand.FileLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.FileLogLevel));
+                    TraceSource.Listeners.Add(listener);
                 }
                 if (TraceableCommand.WriteEventLog)
                 {
-                    TraceSource.Listeners.Add(new EventLogTraceListener(Command.Name));
+                    var listener = new EventLogTraceListener(Command.Name);
+                    listener.Filter = new EventTypeFilter(!TraceableCommand.EventLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.EventLogLevel));
+                    TraceSource.Listeners.Add(listener);
                 }
             }
         }
@@ -46,6 +50,19 @@ namespace ShellMe.CommandLine
         protected TraceSource TraceSource { get; private set; }
 
         protected IConsole Console { get; private set; }
+
+        private SourceLevels GetLevel(IEnumerable<SourceLevels> level)
+        {
+            if (!level.Any())
+                return SourceLevels.All;
+
+            var firstLevel = level.FirstOrDefault();
+
+            if (level.Count() == 1)
+                return firstLevel;
+
+            return level.Skip(1).Aggregate(firstLevel, (acc, current) => acc | current);
+        }
 
         public void WriteLine(string line)
         {

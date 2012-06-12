@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ImpromptuInterface;
 
@@ -37,6 +38,18 @@ namespace ShellMe.CommandLine.CommandHandling
                                                                   .Replace("]", "")
                                                                   .Split(',')
                                                                   .Select(saveConvertToInt));
+
+            TypeProviders.Add(typeof(IEnumerable<SourceLevels>), arg => arg.Value
+                                                                           .Replace("[","")
+                                                                           .Replace("]","")
+                                                                           .Split(',')
+                                                                           .Select(enumString =>
+                                                                                       {
+                                                                                           SourceLevels level;
+                                                                                           Enum.TryParse(enumString, true, out level);
+                                                                                           return level;
+                                                                                       })
+                                                                           .ToList());
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
@@ -62,8 +75,8 @@ namespace ShellMe.CommandLine.CommandHandling
             var tempArg = arguments
                     .Select(arg => arg.Trim())
                     .FirstOrDefault(arg => 
-                        arg.StartsWith("--") 
-                        && arg.Substring(2).Replace("-", "").StartsWith(argument,StringComparison.OrdinalIgnoreCase));
+                        arg.StartsWith("-") 
+                        && arg.Substring(1).Replace("-", "").StartsWith(argument,StringComparison.OrdinalIgnoreCase));
 
             if (tempArg == null)
                 return null;
