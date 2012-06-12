@@ -23,7 +23,7 @@ namespace ShellMe.CommandLine
                                   {
                                       Switch = new SourceSwitch(Command.Name)
                                                    {
-                                                       Level = SourceLevels.All
+                                                       Level = GetLevel(TraceableCommand.LogLevel)
                                                    }
                                   };
 
@@ -46,6 +46,19 @@ namespace ShellMe.CommandLine
         protected TraceSource TraceSource { get; private set; }
 
         protected IConsole Console { get; private set; }
+
+        private SourceLevels GetLevel(IEnumerable<SourceLevels> level)
+        {
+            if (!level.Any())
+                return SourceLevels.All;
+
+            var firstLevel = level.FirstOrDefault();
+
+            if (level.Count() == 1)
+                return firstLevel;
+
+            return level.Skip(1).Aggregate(firstLevel, (acc, current) => acc | current);
+        }
 
         public void WriteLine(string line)
         {

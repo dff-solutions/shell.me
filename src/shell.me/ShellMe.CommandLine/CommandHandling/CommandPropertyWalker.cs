@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ImpromptuInterface;
 
@@ -37,6 +38,19 @@ namespace ShellMe.CommandLine.CommandHandling
                                                                   .Replace("]", "")
                                                                   .Split(',')
                                                                   .Select(saveConvertToInt));
+
+            TypeProviders.Add(typeof(IEnumerable<SourceLevels>), arg => arg.Value
+                                                                           .Replace("[","")
+                                                                           .Replace("]","")
+                                                                           .Split(',')
+                                                                           .Select(enumString =>
+                                                                                       {
+                                                                                           var temp = arg;
+                                                                                           SourceLevels level;
+                                                                                           Enum.TryParse(enumString, true, out level);
+                                                                                           return level;
+                                                                                       })
+                                                                           .ToList());
         }
 
         public void FillCommandProperties(IEnumerable<string> arguments, ICommand command)
