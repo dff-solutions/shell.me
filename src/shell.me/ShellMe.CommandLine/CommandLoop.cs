@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.CommandLine.Locking;
@@ -36,6 +37,13 @@ namespace ShellMe.CommandLine
 
         public void Start(string[] args)
         {
+            Func<string, string[]> splitCommand = input => input.Split(new[]{" -"}, StringSplitOptions.None);
+
+            //The standard argument parsing does not handle inputs like --logLevel=[Error, Information] as we want them
+            //to be treated. That's why we first add a whitespace to each fragment, then combine them again, and
+            //then split them again the way we want it.
+            args = splitCommand(string.Concat(args.Select(fragment => " " + fragment)));
+
             var commandMatcher = new CommandMatcher(args);
             var command = _commandFactory.GetCommand(commandMatcher.CommandName);
 
@@ -69,7 +77,7 @@ namespace ShellMe.CommandLine
                             exit = true;
                         else
                         {
-                            var tempArgs = input.Split(' ');
+                            var tempArgs = splitCommand(input);
                             command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
                             if (TryToProceedCommand(command, tempArgs))
                                 nonInteractive = command.NonInteractive;

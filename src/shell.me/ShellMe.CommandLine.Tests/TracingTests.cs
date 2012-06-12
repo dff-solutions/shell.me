@@ -41,20 +41,20 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Information", console.OutputQueue[0]);
-            Assert.AreEqual("Error", console.OutputQueue[1]);
-        }
-
-        [Test]
-        public void TracesOnlyErrorAndInformationLevel()
-        {
-            var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LogLevelCommand() });
-            var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "LogLevel", "--writeFile=foo.log --LogLevel = [Error,Information] ", "--nonInteractive" });
-
-            Assert.AreEqual("Warning", console.OutputQueue[0]);
             Assert.AreEqual("Information", console.OutputQueue[1]);
+            Assert.AreEqual("Error", console.OutputQueue[2]);
         }
+
+        //[Test]
+        //public void TracesOnlyErrorAndInformationLevel()
+        //{
+        //    var console = new TestConsole(new List<string>());
+        //    var commandFactory = new CommandFactory(new[] { new LogLevelCommand() });
+        //    var commandLoop = new CommandLoop(console, commandFactory);
+        //    commandLoop.Start(new[] { "LogLevel", "--writeFile=foo.log --LogLevel = [Error,Information] ", "--nonInteractive" });
+
+        //    Assert.AreEqual("Warning", console.OutputQueue[0]);
+        //    Assert.AreEqual("Information", console.OutputQueue[1]);
+        //}
     }
 }
