@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Registration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using ShellMe.CommandLine.Extensions;
 
 namespace ShellMe.CommandLine.CommandHandling
 {
@@ -35,49 +38,44 @@ namespace ShellMe.CommandLine.CommandHandling
 
         private void LoadCommands(string path)
         {
+            //TODO
+            //Look into sandboxing the whole thing
+            //We currently don't support the case where multiple commands use multiple versions of the same assembly
+            //http://stackoverflow.com/questions/4145713/looking-for-a-practical-approach-to-sandboxing-net-plugins
+
             var pluginDirectory = string.IsNullOrEmpty(path) ? 
-                Directory.GetParent(Assembly.GetCallingAssembly().Location) : 
+                new DirectoryInfo(Path.Combine(Directory.GetParent(Assembly.GetCallingAssembly().Location).FullName, "plugins")) : 
                 new DirectoryInfo(path);
+            
+            //MEF does not default to use the parameterless constructor, so we need to tell it so.
+            Func<ConstructorInfo[], ConstructorInfo> constructorFilter = 
+                constructorInfos => constructorInfos.FirstOrDefault(
+                    constructorInfo => constructorInfo.GetParameters().Length == 0);
 
-            foreach (var fileInfo in pluginDirectory.GetFiles("*.dll"))
-            {
-                try
-                {
-                    var assembly = Assembly.LoadFile(fileInfo.FullName);
-                    _commands.AddRange(GetCommandsFromAssembly(assembly));
-                }
-                catch (Exception)
-                {
-                    //Just skip any non .NET dlls
-                }
-            }
-        }
+            var registration = new RegistrationBuilder();
+            registration
+                .ForTypesDerivedFrom<ICommand>()
+                .Export()
+                .Export<ICommand>()
+                .SelectConstructor(constructorFilter);
 
-        private IEnumerable<ICommand> GetCommandsFromAssembly(Assembly assembly)
-        {
+            var directoryCatalogs = pluginDirectory
+                .GetDirectories("*", SearchOption.AllDirectories)
+                .Select(dir => new DirectoryCatalog(dir.FullName, registration));
+
+            var aggregateCatalog = new AggregateCatalog(directoryCatalogs);
+
+            var container = new CompositionContainer(aggregateCatalog);
+
             try
             {
-                return assembly
-                    .GetTypes()
-                    .Where(type => type.IsClass)
-                    .Where(type => type.GetInterface("ShellMe.CommandLine.CommandHandling.ICommand") != null)
-                    .Select(type =>
-                                {
-                                    try
-                                    {
-                                        return (ICommand) assembly.CreateInstance(type.ToString());
-                                    }
-                                    catch (Exception)
-                                    {
-                                        return null;
-                                    }
-                                })
-                    .Where(command => command != null);
+                var commands = container.GetExportedValues<ICommand>();
+                _commands.AddRange(commands);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                return Enumerable.Empty<ICommand>();
+                //MEF raises an exception if no plugins were found
             }
-        } 
+        }
     }
 }
