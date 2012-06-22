@@ -6,7 +6,7 @@ using ShellMe.CommandLine;
 
 namespace ShellMe.Testing
 {
-    public class TestConsole : IConsole
+    public class TestConsole : AbstractConsole
     {
         private readonly List<string> _commandQueue;
 
@@ -18,21 +18,21 @@ namespace ShellMe.Testing
 
         public List<string> OutputQueue { get; private set; }
 
-        public void WriteLine(string line)
+        public override void WriteLine(string line)
         {
             OutputQueue.Add(line);
         }
 
-        public string ReadLine()
+        public override string ReadLine()
         {
             var first = _commandQueue.First();
             _commandQueue.RemoveAt(0);
             return first;
         }
 
-        public ConsoleColor ForegroundColor { get; set; }
+        public override ConsoleColor ForegroundColor { get; set; }
 
-        public void ResetColor()
+        public override void ResetColor()
         {
         }
     }

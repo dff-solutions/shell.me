@@ -37,7 +37,8 @@ namespace ShellMe.CommandLine.CommandHandling
                                                                   .Replace("[", "")
                                                                   .Replace("]", "")
                                                                   .Split(',')
-                                                                  .Select(saveConvertToInt));
+                                                                  .Select(saveConvertToInt)
+                                                                  .ToList());
 
             TypeProviders.Add(typeof(IEnumerable<SourceLevels>), arg => arg.Value
                                                                            .Replace("[","")

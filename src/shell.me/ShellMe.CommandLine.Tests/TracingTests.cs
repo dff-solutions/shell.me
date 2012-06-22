@@ -13,7 +13,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsEnumerableLogLevelArgumentAssignment()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LogLevelCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel = [Warning,Information] ", "--nonInteractive" });
 
@@ -25,7 +25,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsEnumerableLogLevelArgumentAssignment2()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LogLevelCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel=[Information, Error]", "--nonInteractive" });
 
@@ -37,7 +37,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsEnumerableLogLevelArgumentInInteractiveMode()
         {
             var console = new TestConsole(new List<string>(){"LogLevel --logLevel=[Information, Error] --non-interactive"});
-            var commandFactory = new CommandFactory(new[] { new LogLevelCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 

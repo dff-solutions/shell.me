@@ -2,7 +2,7 @@
 {
     public interface ICommand
     {
-        ITraceConsole Console { get; set; }
+        AbstractTraceConsole Console { get; set; }
 
         bool NonInteractive { get; set; }
 
