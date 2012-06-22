@@ -16,9 +16,10 @@ shell.me is our attempt to fix that.
 What does shell.me offer?
 =========================
 
-- it provides a simple way to run any custom implemented command 
-  (just create a dll project, implement a very simple interface and drop the dll
-  into the shell.me directory)
+- it provides a simple way to run any custom implemented command
+ - just create a dll project and implement a very simple interface
+ - drop your dll and all it's dependencies into a \plugins\myCoolCommand\ directory
+ - once you restart the shell.me console it will be automagically know about it!
   
 - it does all the heavy lifting for you. No need to parse parameters yourself. Let's
   say your command foo needs an int argument (e.g. BatchSize). All you've got to do is
@@ -74,5 +75,5 @@ What does shell.me offer?
   e.g. ```--LogLevel=[Information, ActivityTracing]``` or use ```--FileLogLevel=[Error]``` and ```--EventLogLevel=[Information]```
   seperatly. Make sure you read up about all the different Levels: http://msdn.microsoft.com/de-de/library/system.diagnostics.sourcelevels.aspx
   
-  - it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
+ - it's MIT licensed https://github.com/dff-solutions/shell.me/blob/master/LICENSE.md  
  
