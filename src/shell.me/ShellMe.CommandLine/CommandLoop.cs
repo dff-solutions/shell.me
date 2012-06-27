@@ -44,6 +44,12 @@ namespace ShellMe.CommandLine
             //then split them again the way we want it.
             args = splitCommand(string.Concat(args.Select(fragment => " " + fragment)));
 
+            if (args.Contains("-debug"))
+            {
+                Console.WriteLine("Attach a debugger and hit any key to continue");
+                Console.ReadLine();
+            }
+
             var commandMatcher = new CommandMatcher(args);
             var command = _commandFactory.GetCommand(commandMatcher.CommandName);
 
