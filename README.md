@@ -20,6 +20,15 @@ What does shell.me offer?
  - just create a dll project and implement a very simple interface
  - drop your dll and all it's dependencies into a \plugins\myCoolCommand\ directory
  - once you restart the shell.me console it will be automagically know about it!
+ 
+- we sandbox all commands. Consider you have two plugins:
+  /plugins/foo/foo.dll
+  /plugins/foo/dependency.dll
+  /plugins/bar/bar.dll
+  /plugins/bar/dependency.dll
+  Both plugins use dependency.dll in *different* versions. Normally this would cause problems
+  since the CLR can not load the same dll in different versions. However, since we sandbox
+  each plugin with it's own ApplicationDomain it's perfectly valid to do so.  
   
 - it does all the heavy lifting for you. No need to parse parameters yourself. Let's
   say your command foo needs an int argument (e.g. BatchSize). All you've got to do is
