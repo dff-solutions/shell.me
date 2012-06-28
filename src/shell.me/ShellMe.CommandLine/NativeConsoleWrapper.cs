@@ -2,19 +2,19 @@
 
 
 namespace ShellMe.CommandLine
-{public class NativeConsoleWrapper : IConsole
+{public class NativeConsoleWrapper : AbstractConsole
     {
-        public void WriteLine(string line)
+        public override void WriteLine(string line)
         {
             Console.WriteLine(line);
         }
 
-        public string ReadLine()
+        public override string ReadLine()
         {
             return Console.ReadLine();
         }
 
-        public ConsoleColor ForegroundColor
+        public override ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
             set
@@ -23,7 +23,7 @@ namespace ShellMe.CommandLine
             }
         }
 
-        public void ResetColor()
+        public override void ResetColor()
         {
             Console.ResetColor();
         }

@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ShellMe.CommandLine.CommandHandling
 {
-    public abstract class BaseCommand : ICommand, ITraceableCommand
+    public abstract class BaseCommand : MarshalByRefObject, ICommand, ITraceableCommand
     {
         protected BaseCommand()
         {
@@ -13,7 +14,7 @@ namespace ShellMe.CommandLine.CommandHandling
             EventLogLevel = new List<SourceLevels>();
         }
 
-        public ITraceConsole Console { get; set; }
+        public AbstractTraceConsole Console { get; set; }
         public bool NonInteractive { get; set; }
         public bool AllowParallel { get; set; }
         public bool Verbose { get; set; }

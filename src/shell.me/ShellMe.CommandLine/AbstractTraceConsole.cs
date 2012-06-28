@@ -6,8 +6,8 @@ using System.Text;
 
 namespace ShellMe.CommandLine
 {
-    public interface ITraceConsole : IConsole
+    public abstract class AbstractTraceConsole : AbstractConsole
     {
-        void TraceEvent(TraceEventType traceEventType, int code, string message);
+        public abstract void TraceEvent(TraceEventType traceEventType, int code, string message);
     }
 }

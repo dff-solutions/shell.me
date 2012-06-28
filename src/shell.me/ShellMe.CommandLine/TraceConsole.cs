@@ -8,11 +8,11 @@ using ShellMe.CommandLine.CommandHandling;
 
 namespace ShellMe.CommandLine
 {
-    class TraceConsole : ITraceConsole, IDisposable
+    class TraceConsole : AbstractTraceConsole, IDisposable
     {
         private readonly IList<IDisposable> _disposables;
 
-        public TraceConsole(IConsole console, ICommand command)
+        public TraceConsole(AbstractConsole console, ICommand command)
         {
             Console = console;
             Command = command;
@@ -63,7 +63,7 @@ namespace ShellMe.CommandLine
 
         protected TraceSource TraceSource { get; private set; }
 
-        protected IConsole Console { get; private set; }
+        protected AbstractConsole Console { get; private set; }
 
         private SourceLevels GetLevel(IEnumerable<SourceLevels> level)
         {
@@ -78,7 +78,7 @@ namespace ShellMe.CommandLine
             return level.Skip(1).Aggregate(firstLevel, (acc, current) => acc | current);
         }
 
-        public void WriteLine(string line)
+        public override void WriteLine(string line)
         {
             Console.WriteLine(line);
 
@@ -88,23 +88,23 @@ namespace ShellMe.CommandLine
             }
         }
 
-        public string ReadLine()
+        public override string ReadLine()
         {
             return Console.ReadLine();
         }
 
-        public ConsoleColor ForegroundColor
+        public override ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
             set { Console.ForegroundColor = value; }
         }
 
-        public void ResetColor()
+        public override void ResetColor()
         {
             Console.ResetColor();
         }
 
-        public void TraceEvent(TraceEventType traceEventType, int code, string message)
+        public override void TraceEvent(TraceEventType traceEventType, int code, string message)
         {
             Console.WriteLine(message);
 

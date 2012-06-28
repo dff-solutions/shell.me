@@ -17,15 +17,15 @@ namespace ShellMe.CommandLine
         public CommandLoop() : this(new NativeConsoleWrapper())
         {}
 
-        public CommandLoop(IConsole console) : this(console, new CommandFactory(new ICommand[]{}))
+        public CommandLoop(AbstractConsole console) : this(console, new CommandFactory())
         {
         }
 
-        public CommandLoop(IConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker())
+        public CommandLoop(AbstractConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker())
         {
         }
 
-        public CommandLoop(IConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker)
+        public CommandLoop(AbstractConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker)
         {
             Console = console;
             _commandFactory = commandFactory;
@@ -33,7 +33,7 @@ namespace ShellMe.CommandLine
             _lockingService = new FileBasedLockingService();
         }
 
-        private IConsole Console { get; set; }
+        private AbstractConsole Console { get; set; }
 
         public void Start(string[] args)
         {
@@ -97,7 +97,7 @@ namespace ShellMe.CommandLine
         {
             if (command != null)
             {
-                ITraceConsole traceConsole = null;
+                AbstractTraceConsole traceConsole = null;
                 try
                 {
                     _commandPropertyWalker.FillCommandProperties(args, command);
@@ -132,7 +132,7 @@ namespace ShellMe.CommandLine
             return false;
         }
 
-        private void LogException(IConsole console, Exception exception, ICommand command)
+        private void LogException(AbstractConsole console, Exception exception, ICommand command)
         {
             if (console == null)
                 console = Console;

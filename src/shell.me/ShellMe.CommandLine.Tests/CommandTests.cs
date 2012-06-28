@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -13,7 +16,7 @@ namespace ShellMe.CommandLine.Tests
         public void CanInitializeCommand()
         {
             var console = new TestConsole(new List<string>() {});
-            var commandFactory = new CommandFactory(new[] {new TestCommand()});
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--non-interactive" });
@@ -26,7 +29,7 @@ namespace ShellMe.CommandLine.Tests
         {
             var console = new TestConsole(new List<string>() {"--test", "exit" });
             //var commandFactory = new CommandFactory(new[] {new TestCommand()});
-            var commandFactory = new CommandFactory(new ICommand[] { });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
 
             var commandLoop = new CommandLoop(console, commandFactory);
             Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test" }));
@@ -36,7 +39,7 @@ namespace ShellMe.CommandLine.Tests
         public void MaliciousCommandWontTakeShellMeDown()
         {
             var console = new TestConsole(new List<string>(){"exit"});
-            var commandFactory = new CommandFactory(new ICommand[] { new MaliciousCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
 
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] {"malicious", " --value=4", "--non-interactive"});
@@ -49,7 +52,7 @@ namespace ShellMe.CommandLine.Tests
         public void SwitchesToInteractiveModeIfStartedWithoutAnyCommand()
         {
             var console = new TestConsole(new List<string>() { "test --nonInteractive" });
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
@@ -61,7 +64,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsBooleanArgumentWithoutAssignmentAsTrue()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest", "--nonInteractive" });
 
@@ -72,7 +75,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsBooleanArgumentWithFalseAssignmentExpression()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false", "--nonInteractive" });
 
@@ -83,7 +86,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsStringArgumentAssignment()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false ", "--Text=Foo", "--non-interactive" });
 
@@ -94,9 +97,9 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsIntArgumentAssignment()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new IntPropertyCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
-            commandLoop.Start(new[] { "test", "--Size = 5 ", "--nonInteractive" });
+            commandLoop.Start(new[] { "IntProperty", "--Size = 5 ", "--nonInteractive" });
 
             Assert.AreEqual("5", console.OutputQueue[0]);
         }
@@ -105,7 +108,7 @@ namespace ShellMe.CommandLine.Tests
         public void InterpretsEnumerableIntArgumentAssignment()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new EnumerableIntPropertyCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "EnumerableInt", "--Values = [1,2, 3,4] ", "--nonInteractive" });
 
@@ -119,7 +122,7 @@ namespace ShellMe.CommandLine.Tests
         public void IgnoresUnsupportedPropertyTypes()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new UnknownPropertyCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             Assert.DoesNotThrow(() => commandLoop.Start(new[] { "UnknownProperty", "--Size = {X: 5, Y: 10 } ", "--nonInteractive" }));
         }
@@ -128,7 +131,7 @@ namespace ShellMe.CommandLine.Tests
         public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
             var console = new TestConsole(new List<string>() { "test", "test --nonInteractive" });
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
@@ -144,7 +147,7 @@ namespace ShellMe.CommandLine.Tests
         public void RunsTwoTimesInteractiveAndThenIgnoresLastCommandBecauseOfPreviousExit()
         {
             var console = new TestConsole(new List<string>() { "test", "exit", "--test" });
-            var commandFactory = new CommandFactory(new[] { new TestCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
@@ -159,7 +162,7 @@ namespace ShellMe.CommandLine.Tests
         public void PrintsExceptionsToTheConsole()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new ExceptionCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
             Assert.IsTrue(console.OutputQueue[0].StartsWith("Unexpected error happended while proceeding the command: RaiseException"));
@@ -169,11 +172,11 @@ namespace ShellMe.CommandLine.Tests
         public void IgnoresSecondCommandBecauseItsConfiguredToNotRunInParallel()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
             var console2 = new TestConsole(new List<string>());
-            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand()});
+            var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
             Task.WaitAll(new[]
@@ -189,11 +192,11 @@ namespace ShellMe.CommandLine.Tests
         public void RunsCommandsInParallel()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
             var console2 = new TestConsole(new List<string>());
-            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
             Task.WaitAll(new[]
@@ -209,11 +212,11 @@ namespace ShellMe.CommandLine.Tests
         public void RunsCommandsInParallelBecauseAllowParallelIsDefaultedToTrue()
         {
             var console = new TestConsole(new List<string>());
-            var commandFactory = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
             var console2 = new TestConsole(new List<string>());
-            var commandFactory2 = new CommandFactory(new[] { new LongRunningCommand() });
+            var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
             Task.WaitAll(new[]

@@ -6,7 +6,7 @@ namespace ShellMe.Testing
     {
         public override string Name
         {
-            get { return "Test"; }
+            get { return "IntProperty"; }
         }
 
         public override void Run()
