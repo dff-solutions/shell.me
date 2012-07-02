@@ -100,7 +100,7 @@ namespace ShellMe.CommandLine
                 AbstractTraceConsole traceConsole = null;
                 try
                 {
-                    _commandPropertyWalker.FillCommandProperties(args, command);
+                    command.InjectProperties(args);
                     traceConsole = new TraceConsole(Console, command);
                 
                     if (command.Verbose)

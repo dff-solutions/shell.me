@@ -1,4 +1,6 @@
-﻿namespace ShellMe.CommandLine.CommandHandling
+﻿using System.Collections.Generic;
+
+namespace ShellMe.CommandLine.CommandHandling
 {
     public interface ICommand
     {
@@ -13,5 +15,7 @@
         string Name { get; }
 
         void Run();
+
+        void InjectProperties(IEnumerable<string> arguments);
     }
 }

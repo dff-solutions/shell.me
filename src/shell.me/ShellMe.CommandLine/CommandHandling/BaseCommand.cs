@@ -25,5 +25,10 @@ namespace ShellMe.CommandLine.CommandHandling
         public IEnumerable<SourceLevels> EventLogLevel { get; set; }
         public abstract string Name { get; }
         public abstract void Run();
+        public void InjectProperties(IEnumerable<string> arguments)
+        {
+            var commandPropertyWalker = new CommandPropertyWalker();
+            commandPropertyWalker.FillCommandProperties(arguments, this);
+        } 
     }
 }
