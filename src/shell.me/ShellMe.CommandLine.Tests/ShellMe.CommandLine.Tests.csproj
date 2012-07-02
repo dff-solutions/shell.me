@@ -68,9 +68,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir $(TargetDir)plugins\testing\
-copy $(TargetDir)*.dll $(TargetDir)plugins\testing\ 
-copy $(TargetDir)ShellMe.Testing.dll $(TargetDir)plugins\testing\ShellMe.Testing.dll</PostBuildEvent>
+    <PostBuildEvent>rmdir /s /q "$(TargetDir)plugins"
+mkdir $(TargetDir)plugins\testing\
+copy $(TargetDir)*.dll $(TargetDir)plugins\testing\</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
