@@ -57,6 +57,10 @@
       <Project>{4F0508C3-BC48-442F-8E5A-F932DF34C87B}</Project>
       <Name>ShellMe.CommandLine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShellMe.Console\ShellMe.Console.csproj">
+      <Project>{58CC1506-3EBF-45E0-8A50-C841D2C81996}</Project>
+      <Name>ShellMe.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShellMe.Testing\ShellMe.Testing.csproj">
       <Project>{E13AEEEC-4C87-46A3-B33E-50C2656CEAE1}</Project>
       <Name>ShellMe.Testing</Name>
@@ -65,7 +69,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)plugins\testing\
-copy $(TargetDir)ShellMe.Commandline.dll $(TargetDir)plugins\testing\ShellMe.Commandline.dll 
+copy $(TargetDir)*.dll $(TargetDir)plugins\testing\ 
 copy $(TargetDir)ShellMe.Testing.dll $(TargetDir)plugins\testing\ShellMe.Testing.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E13AEEEC-4C87-46A3-B33E-50C2656CEAE1}</ProjectGuid>
+    <ProjectGuid>{76C21099-C66C-4462-8C45-236B9F8EE67D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShellMe.Testing</RootNamespace>
-    <AssemblyName>ShellMe.Testing</AssemblyName>
+    <RootNamespace>ShellMe.Console.Tests</RootNamespace>
+    <AssemblyName>ShellMe.Console.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,9 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,25 +43,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExceptionCommand.cs" />
-    <Compile Include="IntPropertyCommand.cs" />
-    <Compile Include="EnumerableIntCommand.cs" />
-    <Compile Include="WriteFileCommand.cs" />
-    <Compile Include="LogLevelCommand.cs" />
-    <Compile Include="MaliciousCommand.cs" />
-    <Compile Include="LongRunningCommand.cs" />
+    <Compile Include="ConsoleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCommand.cs" />
-    <Compile Include="TestConsole.cs" />
-    <Compile Include="UnknownPropertyCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShellMe.CommandLine\ShellMe.CommandLine.csproj">
-      <Project>{4F0508C3-BC48-442F-8E5A-F932DF34C87B}</Project>
-      <Name>ShellMe.CommandLine</Name>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShellMe.Console\ShellMe.Console.csproj">
+      <Project>{58CC1506-3EBF-45E0-8A50-C841D2C81996}</Project>
+      <Name>ShellMe.Console</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir $(TargetDir)plugins\testing\
+copy $(ProjectDir)..\ShellMe.Testing\bin\$(ConfigurationName)\*.dll $(TargetDir)plugins\testing\</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

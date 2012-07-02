@@ -11,7 +11,6 @@ namespace ShellMe.CommandLine
     public class CommandLoop
     {
         private readonly CommandFactory _commandFactory;
-        private readonly ICommandPropertyWalker _commandPropertyWalker;
         private readonly ILockingService _lockingService;
 
         public CommandLoop() : this(new NativeConsoleWrapper())
@@ -21,15 +20,10 @@ namespace ShellMe.CommandLine
         {
         }
 
-        public CommandLoop(AbstractConsole console, CommandFactory commandFactory): this(console,commandFactory, new CommandPropertyWalker())
-        {
-        }
-
-        public CommandLoop(AbstractConsole console, CommandFactory commandFactory, ICommandPropertyWalker commandPropertyWalker)
+        public CommandLoop(AbstractConsole console, CommandFactory commandFactory)
         {
             Console = console;
             _commandFactory = commandFactory;
-            _commandPropertyWalker = commandPropertyWalker;
             _lockingService = new FileBasedLockingService();
         }
 
@@ -57,7 +51,6 @@ namespace ShellMe.CommandLine
             {
                 try
                 {
-                    _commandPropertyWalker.FillCommandProperties(args, command);
                     TryToProceedCommand(command, args);
                 }
                 catch (Exception exception)
