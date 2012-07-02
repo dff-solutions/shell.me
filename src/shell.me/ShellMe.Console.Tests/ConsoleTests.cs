@@ -13,18 +13,24 @@ namespace ShellMe.Console.Tests
         [Test]
         public void IntPropertyInjectionWorks()
         {
-            var shellmeConsoleExe = "ShellMe.Console.exe";
+            
             var testFile = "WriteFile.txt";
             Assert.IsFalse(File.Exists(testFile));
-            var shellMeConsoleExeFullName = Path.Combine(Environment.CurrentDirectory, shellmeConsoleExe);
-            var processStartInfo = new ProcessStartInfo(shellMeConsoleExeFullName, string.Format("writeFile --non-interactive --fileName={0}", testFile));
-            processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
-            processStartInfo.UseShellExecute = false;
-            var process = Process.Start(processStartInfo);
+            var process = InvokeShellMe(string.Format("writeFile --non-interactive --fileName={0}", testFile));
             process.WaitForExit();
             Assert.IsTrue(File.Exists(testFile));
             File.Delete(testFile);
             Assert.IsFalse(File.Exists(testFile));
+        }
+
+        private Process InvokeShellMe(string fullCommand)
+        {
+            var shellMeConsoleExe = "ShellMe.Console.exe";
+            var shellMeConsoleExeFullName = Path.Combine(Environment.CurrentDirectory, shellMeConsoleExe);
+            var processStartInfo = new ProcessStartInfo(shellMeConsoleExeFullName, fullCommand);
+            processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+            processStartInfo.UseShellExecute = false;
+            return Process.Start(processStartInfo);
         }
     }
 }
