@@ -10,7 +10,7 @@ namespace ShellMe.CommandLine
 {
     public class CommandLoop
     {
-        private readonly CommandFactory _commandFactory;
+        private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
 
         public CommandLoop() : this(new NativeConsoleWrapper())
@@ -20,7 +20,7 @@ namespace ShellMe.CommandLine
         {
         }
 
-        public CommandLoop(AbstractConsole console, CommandFactory commandFactory)
+        public CommandLoop(AbstractConsole console, ICommandFactory commandFactory)
         {
             Console = console;
             _commandFactory = commandFactory;
