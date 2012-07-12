@@ -52,6 +52,7 @@
     <Compile Include="CommandHandling\CommandFactory.cs" />
     <Compile Include="CommandHandling\ICommand.cs" />
     <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
+    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="ExceptionWalker.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="AbstractConsole.cs" />

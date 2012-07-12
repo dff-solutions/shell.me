@@ -106,7 +106,10 @@ namespace ShellMe.CommandLine
 
         public override void TraceEvent(TraceEventType traceEventType, int code, string message)
         {
-            Console.WriteLine(message);
+            if (traceEventType == TraceEventType.Error || traceEventType == TraceEventType.Warning || traceEventType == TraceEventType.Critical)
+                ConsoleHelper.WriteLineInRed(Console, message);
+            else
+                Console.WriteLine(message);
 
             if(TraceableCommand != null)
                 TraceSource.TraceEvent(traceEventType, code, message);

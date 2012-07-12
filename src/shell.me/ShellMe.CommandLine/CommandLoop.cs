@@ -59,6 +59,8 @@ namespace ShellMe.CommandLine
                     LogException(new TraceConsole(Console,command), exception, command);
                 }
             }
+            else
+                NotifyOnUnknownCommand(commandMatcher.CommandName);
 
             var nonInteractive = command != null && command.NonInteractive;
             var exit = false;
@@ -77,20 +79,30 @@ namespace ShellMe.CommandLine
                             exit = true;
                         else if(input.Equals("list commands", StringComparison.OrdinalIgnoreCase))
                         {
-                            var currentColor = Console.ForegroundColor;
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            _commandFactory.GetAvailable().ForEach(c => Console.WriteLine(c.Name));
-                            Console.ForegroundColor = currentColor;
+                            _commandFactory.GetAvailable().ForEach(c => ConsoleHelper.WriteLineInGreen(Console, c.Name));
                         }
                         else
                         {
                             var tempArgs = splitCommand(input);
-                            command = _commandFactory.GetCommand(new CommandMatcher(tempArgs).CommandName);
+                            var commandName = new CommandMatcher(tempArgs).CommandName;
+                            command = _commandFactory.GetCommand(commandName);
+                            
+                            if (command == null)
+                                NotifyOnUnknownCommand(commandName);
+
                             if (TryToProceedCommand(command, tempArgs))
                                 nonInteractive = command.NonInteractive;
                         }
                     }
                 }
+            }
+        }
+
+        private void NotifyOnUnknownCommand(string commandName)
+        {
+            if (!string.IsNullOrEmpty(commandName))
+            {
+                ConsoleHelper.WriteLineInRed(Console, string.Format("Unknown command: {0}", commandName));
             }
         }
 
@@ -139,7 +151,6 @@ namespace ShellMe.CommandLine
                 console = Console;
 
             var traceconsole = console as TraceConsole;
-            console.ForegroundColor = ConsoleColor.Red;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Unexpected error happended while proceeding the command: " + command.Name);
             var exceptionWalker = new ExceptionWalker(exception);
@@ -159,17 +170,15 @@ namespace ShellMe.CommandLine
                 {
                     //In case of any errors regardings the tracing (e.g. missing FileWrite rights) use 
                     //the default console and log this exception as well
-                    Console.WriteLine(stringBuilder.ToString());
+                    ConsoleHelper.WriteLineInRed(Console, stringBuilder.ToString());
                     LogException(Console, ex, command);
                 }
                 
             }
             else
             {
-                Console.WriteLine(stringBuilder.ToString());
+                ConsoleHelper.WriteLineInRed(Console, stringBuilder.ToString());
             }
-
-            console.ResetColor();
         }
     }
 }
