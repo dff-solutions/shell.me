@@ -56,7 +56,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[0]);
+            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[0]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[1]);
         }
 
@@ -136,9 +136,9 @@ namespace ShellMe.CommandLine.Tests
             commandLoop.Start(new[] { "test", "--IsTest" });
 
             Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
+            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
+            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[3]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[4]);
             Assert.AreEqual(5, console.OutputQueue.Count);
         }
@@ -152,9 +152,9 @@ namespace ShellMe.CommandLine.Tests
             commandLoop.Start(new[] { "test", "--IsTest" });
 
             Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[1]);
+            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[1]);
             Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
-            Assert.AreEqual("Enter commands or type exit to close", console.OutputQueue[3]);
+            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[3]);
             Assert.AreEqual(4, console.OutputQueue.Count);
         }
 

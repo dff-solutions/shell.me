@@ -67,7 +67,7 @@ namespace ShellMe.CommandLine
 
             while (!nonInteractive && !exit)
             {
-                Console.WriteLine("Enter command, use [list commands] or type [exit] to close ");
+                Console.WriteLine("Enter command, use [list commands] or type [exit] to close");
 
                 if (!nonInteractive)
                 {
