@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 
-namespace ShellMe.CommandLine
+namespace ShellMe.CommandLine.Console
 {
     class TraceConsole : AbstractTraceConsole, IDisposable
     {
@@ -97,11 +96,6 @@ namespace ShellMe.CommandLine
         {
             get { return Console.ForegroundColor; }
             set { Console.ForegroundColor = value; }
-        }
-
-        public override void ResetColor()
-        {
-            Console.ResetColor();
         }
 
         public override void TraceEvent(TraceEventType traceEventType, int code, string message)

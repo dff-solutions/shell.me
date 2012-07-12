@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ShellMe.CommandLine;
+using ShellMe.CommandLine.Console;
 
 namespace ShellMe.Testing
 {
@@ -31,9 +32,5 @@ namespace ShellMe.Testing
         }
 
         public override ConsoleColor ForegroundColor { get; set; }
-
-        public override void ResetColor()
-        {
-        }
     }
 }

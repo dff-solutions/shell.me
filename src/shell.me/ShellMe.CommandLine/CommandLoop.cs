@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ShellMe.CommandLine.CommandHandling;
+using ShellMe.CommandLine.Console;
+using ShellMe.CommandLine.Console.LowLevel;
 using ShellMe.CommandLine.Locking;
 using ShellMe.CommandLine.Extensions;
 
@@ -14,7 +16,7 @@ namespace ShellMe.CommandLine
         private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
 
-        public CommandLoop() : this(new NativeConsoleWrapper())
+        public CommandLoop() : this(new LowLevelToAbstractConsoleAdapter(new LowLevelNativeConsole()))
         {}
 
         public CommandLoop(AbstractConsole console) : this(console, new CommandFactory())
@@ -77,7 +79,7 @@ namespace ShellMe.CommandLine
                     {
                         if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                             exit = true;
-                        else if(input.Equals("list commands", StringComparison.OrdinalIgnoreCase))
+                        else if(input.Trim().Equals("list commands", StringComparison.OrdinalIgnoreCase))
                         {
                             _commandFactory.GetAvailable().ForEach(c => ConsoleHelper.WriteLineInGreen(Console, c.Name));
                         }

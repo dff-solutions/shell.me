@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ShellMe.CommandLine.Console;
 
 namespace ShellMe.CommandLine.CommandHandling
 {

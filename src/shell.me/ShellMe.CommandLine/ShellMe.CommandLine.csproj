@@ -53,18 +53,22 @@
     <Compile Include="CommandHandling\ICommand.cs" />
     <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
     <Compile Include="ConsoleHelper.cs" />
+    <Compile Include="Console\LowLevel\LowLevelToAbstractConsoleAdapter.cs" />
+    <Compile Include="Console\LowLevel\ConsoleKeyExtensions.cs" />
+    <Compile Include="Console\LowLevel\ILowLevelConsole.cs" />
+    <Compile Include="Console\LowLevel\LowLevelNativeConsole.cs" />
     <Compile Include="ExceptionWalker.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="AbstractConsole.cs" />
+    <Compile Include="Console\AbstractConsole.cs" />
     <Compile Include="CommandHandling\ITraceableCommand.cs" />
-    <Compile Include="AbstractTraceConsole.cs" />
+    <Compile Include="Console\AbstractTraceConsole.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Locking\FileBasedLockingService.cs" />
     <Compile Include="Locking\ILockingService.cs" />
-    <Compile Include="NativeConsoleWrapper.cs" />
+    <Compile Include="Console\NativeConsoleWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimestampedTextWriterTraceListener.cs" />
-    <Compile Include="TraceConsole.cs" />
+    <Compile Include="Console\TraceConsole.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

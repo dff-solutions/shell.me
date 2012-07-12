@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 
-namespace ShellMe.CommandLine
+namespace ShellMe.CommandLine.Console
 {
     public abstract class AbstractTraceConsole : AbstractConsole
     {
