@@ -42,7 +42,7 @@ namespace ShellMe.CommandLine
                         fileInfo.Directory.Create();
                     }
 
-                    var listener = new TextWriterTraceListener(fileName);
+                    var listener = new TimestampedTextWriterTraceListener(fileName);
                     listener.Filter = new EventTypeFilter(!TraceableCommand.FileLogLevel.Any() ? GetLevel(TraceableCommand.LogLevel) : GetLevel(TraceableCommand.FileLogLevel));
                     TraceSource.Listeners.Add(listener);
                     _disposables.Add(listener);

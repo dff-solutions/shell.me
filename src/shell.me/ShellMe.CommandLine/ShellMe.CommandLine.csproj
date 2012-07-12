@@ -61,6 +61,7 @@
     <Compile Include="Locking\ILockingService.cs" />
     <Compile Include="NativeConsoleWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimestampedTextWriterTraceListener.cs" />
     <Compile Include="TraceConsole.cs" />
   </ItemGroup>
   <ItemGroup />
