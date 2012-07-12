@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.CommandLine.Locking;
+using ShellMe.CommandLine.Extensions;
 
 namespace ShellMe.CommandLine
 {
     public class CommandLoop
     {
-        private readonly CommandFactory _commandFactory;
+        private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
 
         public CommandLoop() : this(new NativeConsoleWrapper())
@@ -20,7 +21,7 @@ namespace ShellMe.CommandLine
         {
         }
 
-        public CommandLoop(AbstractConsole console, CommandFactory commandFactory)
+        public CommandLoop(AbstractConsole console, ICommandFactory commandFactory)
         {
             Console = console;
             _commandFactory = commandFactory;
@@ -64,7 +65,7 @@ namespace ShellMe.CommandLine
 
             while (!nonInteractive && !exit)
             {
-                Console.WriteLine("Enter commands or type exit to close");
+                Console.WriteLine("Enter command, use [list commands] or type [exit] to close ");
 
                 if (!nonInteractive)
                 {
@@ -72,8 +73,15 @@ namespace ShellMe.CommandLine
 
                     if (!string.IsNullOrEmpty(input))
                     {
-                        if (input.ToLower() == "exit")
+                        if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                             exit = true;
+                        else if(input.Equals("list commands", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var currentColor = Console.ForegroundColor;
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            _commandFactory.GetAvailable().ForEach(c => Console.WriteLine(c.Name));
+                            Console.ForegroundColor = currentColor;
+                        }
                         else
                         {
                             var tempArgs = splitCommand(input);

@@ -14,7 +14,7 @@ namespace ShellMe.CommandLine.CommandHandling
         public string TypeName { get; set; }
     }
 
-    public class CommandFactory
+    public class CommandFactory : ICommandFactory
     {
         private readonly List<CommandMetaData> _commandMetaDataList; 
 
@@ -27,6 +27,11 @@ namespace ShellMe.CommandLine.CommandHandling
             _commandMetaDataList = new List<CommandMetaData>();
             LoadCommands(pluginDirectory);
         }
+
+        public IEnumerable<ICommand> GetAvailable()
+        {
+            return _commandMetaDataList.Select(metaData => metaData.Command);
+        } 
 
         public ICommand GetCommand(string commandName)
         {
@@ -49,7 +54,7 @@ namespace ShellMe.CommandLine.CommandHandling
                     .SelectMany(LoadCommandsFromDirectory));
         }
 
-        public IEnumerable<CommandMetaData> LoadCommandsFromDirectory(DirectoryInfo directory)
+        private IEnumerable<CommandMetaData> LoadCommandsFromDirectory(DirectoryInfo directory)
         {
             AppDomain domain = null;
             var commands = new List<CommandMetaData>();
@@ -97,7 +102,7 @@ namespace ShellMe.CommandLine.CommandHandling
             return commands;
         }
 
-        public ICommand CreateCommand(CommandMetaData commandMetaData)
+        private ICommand CreateCommand(CommandMetaData commandMetaData)
         {
             return (ICommand)commandMetaData.Domain.CreateInstanceAndUnwrap(commandMetaData.AssemblyName, commandMetaData.TypeName);
         }
