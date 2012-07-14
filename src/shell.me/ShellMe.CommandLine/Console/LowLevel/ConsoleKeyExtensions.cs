@@ -47,10 +47,14 @@ namespace ShellMe.CommandLine.Console.LowLevel
                    keyInfo.Key == ConsoleKey.OemMinus ||
                    keyInfo.Key == ConsoleKey.OemPlus ||
                    keyInfo.Key == ConsoleKey.OemPeriod ||
+                   keyInfo.Key == ConsoleKey.Oem1 ||
                    keyInfo.Key == ConsoleKey.Oem2 ||
+                   keyInfo.Key == ConsoleKey.Oem3 ||
                    keyInfo.Key == ConsoleKey.Oem4 ||
                    keyInfo.Key == ConsoleKey.Oem5 ||
                    keyInfo.Key == ConsoleKey.Oem6 ||
+                   keyInfo.Key == ConsoleKey.Oem7 ||
+                   keyInfo.Key == ConsoleKey.Oem8 ||
                    keyInfo.Key == ConsoleKey.Oem102 ||
                    keyInfo.Key == ConsoleKey.Spacebar;
         }

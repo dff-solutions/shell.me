@@ -17,8 +17,8 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel = [Warning,Information] ", "--nonInteractive" });
 
-            Assert.AreEqual("Warning", console.OutputQueue[0]);
-            Assert.AreEqual("Information", console.OutputQueue[1]);
+            Assert.AreEqual("Warning", console.OutputQueue[7]);
+            Assert.AreEqual("Information", console.OutputQueue[8]);
         }
 
         [Test]
@@ -29,8 +29,8 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel=[Information, Error]", "--nonInteractive" });
 
-            Assert.AreEqual("Information", console.OutputQueue[0]);
-            Assert.AreEqual("Error", console.OutputQueue[1]);
+            Assert.AreEqual("Information", console.OutputQueue[7]);
+            Assert.AreEqual("Error", console.OutputQueue[8]);
         }
 
         [Test]
@@ -41,8 +41,8 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Information", console.OutputQueue[1]);
-            Assert.AreEqual("Error", console.OutputQueue[2]);
+            Assert.AreEqual("Information", console.OutputQueue[7]);
+            Assert.AreEqual("Error", console.OutputQueue[8]);
         }
 
         //[Test]

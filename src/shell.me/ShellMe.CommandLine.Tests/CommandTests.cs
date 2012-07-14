@@ -21,7 +21,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--non-interactive" });
 
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[7]);
         }
 
         [Test]
@@ -43,8 +43,7 @@ namespace ShellMe.CommandLine.Tests
 
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] {"malicious", " --value=4", "--non-interactive"});
-            Assert.AreEqual(2, console.OutputQueue.Count);
-            Assert.True(console.OutputQueue[0].StartsWith("Unexpected error happended while proceeding the command: Malicious"));
+            Assert.True(console.OutputQueue[7].StartsWith("Unexpected error happended while proceeding the command: Malicious"));
             
         }
 
@@ -56,8 +55,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[0]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[1]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[7]);
         }
 
         [Test]
@@ -68,7 +66,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest", "--nonInteractive" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: True, Text: "));
         }
 
         [Test]
@@ -79,7 +77,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false", "--nonInteractive" });
 
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[0]);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: False, Text: "));
         }
 
         [Test]
@@ -90,7 +88,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false ", "--Text=Foo", "--non-interactive" });
 
-            Assert.AreEqual("Run. Test: False, Text: Foo", console.OutputQueue[0]);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: False, Text: Foo"));
         }
 
         [Test]
@@ -101,7 +99,7 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "IntProperty", "--Size = 5 ", "--nonInteractive" });
 
-            Assert.AreEqual("5", console.OutputQueue[0]);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "5"));
         }
 
         [Test]
@@ -112,10 +110,10 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "EnumerableInt", "--Values = [1,2, 3,4] ", "--nonInteractive" });
 
-            Assert.AreEqual("1", console.OutputQueue[0]);
-            Assert.AreEqual("2", console.OutputQueue[1]);
-            Assert.AreEqual("3", console.OutputQueue[2]);
-            Assert.AreEqual("4", console.OutputQueue[3]);
+            Assert.AreEqual("1", console.OutputQueue[7]);
+            Assert.AreEqual("2", console.OutputQueue[8]);
+            Assert.AreEqual("3", console.OutputQueue[9]);
+            Assert.AreEqual("4", console.OutputQueue[10]);
         }
 
         [Test]
@@ -135,12 +133,10 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
-            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[1]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
-            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[3]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[4]);
-            Assert.AreEqual(5, console.OutputQueue.Count);
+            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[7]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[8]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[9]);
+            Assert.AreEqual(10, console.OutputQueue.Count);
         }
 
         [Test]
@@ -151,11 +147,9 @@ namespace ShellMe.CommandLine.Tests
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[0]);
-            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[1]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[2]);
-            Assert.AreEqual("Enter command, use [list commands] or type [exit] to close", console.OutputQueue[3]);
-            Assert.AreEqual(4, console.OutputQueue.Count);
+            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[7]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[8]);
+            Assert.AreEqual(9, console.OutputQueue.Count);
         }
 
         [Test]
@@ -165,7 +159,7 @@ namespace ShellMe.CommandLine.Tests
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
-            Assert.IsTrue(console.OutputQueue[0].StartsWith("Unexpected error happended while proceeding the command: RaiseException"));
+            Assert.IsTrue(console.OutputQueue[7].StartsWith("Unexpected error happended while proceeding the command: RaiseException"));
         }
 
         [Test]
@@ -185,7 +179,17 @@ namespace ShellMe.CommandLine.Tests
                                  Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=false" }))
                              });
 
-            Assert.AreEqual(1, console.OutputQueue.Count + console2.OutputQueue.Count);
+            var successfulRuns = 0;
+            var firstCommandRun = console.OutputQueue.Exists(x => x == "Completed");
+            var secondCommandRun = console2.OutputQueue.Exists(x => x == "Completed");
+
+            if (firstCommandRun)
+                successfulRuns++;
+
+            if (secondCommandRun)
+                successfulRuns++;
+
+            Assert.AreEqual(1, successfulRuns);
         }
 
         [Test]
@@ -205,7 +209,8 @@ namespace ShellMe.CommandLine.Tests
                                  Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=true" }))
                              });
 
-            Assert.AreEqual(2, console.OutputQueue.Count + console2.OutputQueue.Count);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Completed"));
+            Assert.IsTrue(console2.OutputQueue.Exists(x => x == "Completed"));
         }
 
         [Test]
@@ -225,7 +230,8 @@ namespace ShellMe.CommandLine.Tests
                                  Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive" }))
                              });
 
-            Assert.AreEqual(2, console.OutputQueue.Count + console2.OutputQueue.Count);
+            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Completed"));
+            Assert.IsTrue(console2.OutputQueue.Exists(x => x == "Completed"));
         }
     }
 }

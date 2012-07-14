@@ -73,13 +73,13 @@ namespace ShellMe.CommandLine
             {
                 if (!nonInteractive)
                 {
-                    var input = Console.ReadLine();
+                    var input = Console.ReadLine().Trim();
 
                     if (!string.IsNullOrEmpty(input))
                     {
                         if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                             exit = true;
-                        else if(input.Trim().Equals("list commands", StringComparison.OrdinalIgnoreCase))
+                        else if(input.Equals("list commands", StringComparison.OrdinalIgnoreCase))
                         {
                             _commandFactory.GetAvailable().ForEach(c => ConsoleHelper.WriteLineInGreen(Console, c.Name));
                         }
@@ -104,7 +104,7 @@ namespace ShellMe.CommandLine
         {
             var colorResetPoint = ConsoleHelper.CreateColorResetPoint(Console);
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("Welcome to shell.me 1.2.0");
+            Console.WriteLine(string.Format("Welcome to shell.me v.{0}", typeof(CommandLoop).Assembly.GetName().Version));
             Console.WriteLine(" ");
             Console.WriteLine("Fork us on github!");
             Console.WriteLine("We are MIT licensed: github.com/dff-solutions/shell.me");

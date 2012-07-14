@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ShellMe.CommandLine.Console.LowLevel
 {
-    class LowLevelNativeConsole : ILowLevelConsole
+    public class LowLevelNativeConsole : ILowLevelConsole
     {
         public int MaxColumn
         {
@@ -68,10 +68,10 @@ namespace ShellMe.CommandLine.Console.LowLevel
             }
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr GetStdHandle(int nStdHandle);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern bool ReadConsoleOutputCharacter(IntPtr hConsoleOutput, [Out] StringBuilder lpCharacter, uint length, Coord bufferCoord, out uint lpNumberOfCharactersRead);
 
         [StructLayout(LayoutKind.Sequential)]

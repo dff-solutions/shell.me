@@ -72,8 +72,9 @@ namespace ShellMe.CommandLine.Console.LowLevel
                 var returnPoint = _cursorController.CreateCursorReturnPoint();
                 _console.WriteAtCursorAndMove(' ');
                 returnPoint();
-                Write(textAfterInput);
+                Write(textAfterInput, false);
                 returnPoint();
+                _cursorController.MoveLineMarkerBackward();
             }
             else if (keyInfo.Key == ConsoleKey.LeftArrow)
             {
@@ -98,11 +99,11 @@ namespace ShellMe.CommandLine.Console.LowLevel
                 var returnPoint = _cursorController.CreateCursorReturnPoint();
 
                 _console.WriteAtCursorAndMove(keyInfo.KeyChar);
-                Write(textAfterInput);
+                Write(textAfterInput, false);
                 returnPoint();
                 _cursorController.MoveCursorForward();
+                _cursorController.MoveLineMarkerForward();
             }
-            _cursorController.AdjustCurrentLineMarker(keyInfo);
 
             return new ReadInfo {KeyInfo = keyInfo, Text = keyInfo.KeyChar.ToString(CultureInfo.InvariantCulture)};
         }
@@ -130,11 +131,19 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
         public void Write(IEnumerable<char> keys)
         {
+            Write(keys, true);
+        }
+
+        private void Write(IEnumerable<char> keys, bool adjustLineMarker)
+        {
             foreach (var key in keys)
             {
                 _console.WriteAtCursorAndMove(key);
+                if(adjustLineMarker)
+                    _cursorController.MoveLineMarkerForward();
             }
         }
+
 
         public override void WriteLine(string text)
         {
@@ -249,9 +258,6 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
         public bool IsStartOfInput()
         {
-
-            //_console.CursorLeft == 0 && _console.CursorLeft == LineStart.CursorLeft && _console.CursorTop == LineStart.CursorTop
-
             return _console.CursorLeft == _lineStart.CursorLeft && _console.CursorTop == _lineStart.CursorTop;
         }
 
@@ -260,27 +266,25 @@ namespace ShellMe.CommandLine.Console.LowLevel
             return _console.CursorLeft == _lineEnd.CursorLeft && _console.CursorTop == _lineEnd.CursorTop;
         }
 
-        public void AdjustCurrentLineMarker(ConsoleKeyInfo keyInfo)
+        public void MoveLineMarkerForward()
         {
-            if (keyInfo.IsPrintable())
+            if (_lineEnd.CursorLeft < _console.MaxColumn)
+                _lineEnd.CursorLeft++;
+            else
             {
-                if (_lineEnd.CursorLeft < _console.MaxColumn)
-                    _lineEnd.CursorLeft++;
-                else
-                {
-                    _lineEnd.CursorLeft = 0;
-                    _lineEnd.CursorTop++;
-                }
+                _lineEnd.CursorLeft = 0;
+                _lineEnd.CursorTop++;
             }
-            else if (keyInfo.Key == ConsoleKey.Backspace)
+        }
+
+        public void MoveLineMarkerBackward()
+        {
+            if (_lineEnd.CursorLeft > 0)
+                _lineEnd.CursorLeft--;
+            else if (_lineEnd.CursorTop > 0)
             {
-                if (_lineEnd.CursorLeft > 0)
-                    _lineEnd.CursorLeft--;
-                else if (_lineEnd.CursorTop > 0)
-                {
-                    _lineEnd.CursorTop--;
-                    _lineEnd.CursorLeft = _console.MaxColumn;
-                }
+                _lineEnd.CursorTop--;
+                _lineEnd.CursorLeft = _console.MaxColumn;
             }
         }
     }
