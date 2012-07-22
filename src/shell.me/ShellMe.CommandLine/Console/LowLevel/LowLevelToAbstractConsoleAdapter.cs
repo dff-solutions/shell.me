@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace ShellMe.CommandLine.Console.LowLevel
 {
@@ -9,12 +11,15 @@ namespace ShellMe.CommandLine.Console.LowLevel
     {
         private readonly ILowLevelConsole _console;
         private readonly CursorController _cursorController;
+        private readonly Subject<ConsoleKeyInfo> _inputs;
 
         public LowLevelToAbstractConsoleAdapter(ILowLevelConsole console)
         {
             Prompt = "(S) ";
             PromptColor = ConsoleColor.DarkCyan;
             
+            _inputs = new Subject<ConsoleKeyInfo>();
+
             _console = console;
             
             //set the pointer for the current line 
@@ -26,6 +31,11 @@ namespace ShellMe.CommandLine.Console.LowLevel
         public string Prompt { get; set; }
 
         public ConsoleColor PromptColor { get; set; }
+
+        public IObservable<ConsoleKeyInfo> KeyStrokes 
+        { 
+            get { return _inputs.AsObservable(); } 
+        }
 
         public override string ReadLine()
         {
@@ -66,15 +76,7 @@ namespace ShellMe.CommandLine.Console.LowLevel
                 if (_cursorController.IsStartOfInput())
                     return new ReadInfo { KeyInfo = keyInfo };
 
-                var textAfterInput = ReadFromCursorToEndOfInput();
-
-                _cursorController.MoveCursorBackward();
-                var returnPoint = _cursorController.CreateCursorReturnPoint();
-                _console.WriteAtCursorAndMove(' ');
-                returnPoint();
-                Write(textAfterInput, false);
-                returnPoint();
-                _cursorController.MoveLineMarkerBackward();
+                OnBackspaceHit();
             }
             else if (keyInfo.Key == ConsoleKey.LeftArrow)
             {
@@ -105,7 +107,22 @@ namespace ShellMe.CommandLine.Console.LowLevel
                 _cursorController.MoveLineMarkerForward();
             }
 
+            _inputs.OnNext(keyInfo);
+
             return new ReadInfo {KeyInfo = keyInfo, Text = keyInfo.KeyChar.ToString(CultureInfo.InvariantCulture)};
+        }
+
+        private void OnBackspaceHit()
+        {
+            var textAfterInput = ReadFromCursorToEndOfInput();
+
+            _cursorController.MoveCursorBackward();
+            var returnPoint = _cursorController.CreateCursorReturnPoint();
+            _console.WriteAtCursorAndMove(' ');
+            returnPoint();
+            Write(textAfterInput, false);
+            returnPoint();
+            _cursorController.MoveLineMarkerBackward();
         }
 
         public override ConsoleColor ForegroundColor
@@ -144,6 +161,18 @@ namespace ShellMe.CommandLine.Console.LowLevel
             }
         }
 
+        public void EraseCurrentLine()
+        {
+            while (!_cursorController.IsEndOfInput())
+            {
+                _cursorController.MoveCursorForward();
+            }
+
+            while (!_cursorController.IsStartOfInput())
+            {
+                OnBackspaceHit();
+            }
+        }
 
         public override void WriteLine(string text)
         {

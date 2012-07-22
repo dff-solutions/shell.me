@@ -8,6 +8,7 @@ using ShellMe.CommandLine.Console;
 using ShellMe.CommandLine.Console.LowLevel;
 using ShellMe.CommandLine.Locking;
 using ShellMe.CommandLine.Extensions;
+using System.Reactive.Linq;
 
 namespace ShellMe.CommandLine
 {
@@ -28,6 +29,20 @@ namespace ShellMe.CommandLine
             Console = console;
             _commandFactory = commandFactory;
             _lockingService = new FileBasedLockingService();
+
+            var adapter = console as LowLevelToAbstractConsoleAdapter;
+            if (adapter != null)
+                DoCrazyThings(adapter);
+        }
+
+        private void DoCrazyThings(LowLevelToAbstractConsoleAdapter adapter)
+        {
+            adapter.KeyStrokes
+                .Where(keyInfo => keyInfo.Key == ConsoleKey.UpArrow)
+                .Subscribe(_ =>
+                               {
+                                   adapter.EraseCurrentLine();
+                               });
         }
 
         private AbstractConsole Console { get; set; }

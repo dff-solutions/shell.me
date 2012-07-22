@@ -116,5 +116,24 @@ namespace ShellMe.CommandLine.Tests
             Assert.AreEqual("(S) Hello World", lowLevelConsole.ReadInLineFromTo(0, 0, 14));
             Assert.AreEqual(10, lowLevelConsole.CursorLeft);
         }
+
+        [Test]
+        public void ErasesCurrentLineAndResetsCursor()
+        {
+            var inputSequence = "Hello".ToInputSequence();
+
+            var lowLevelConsole = new LowLevelTestConsole(inputSequence);
+            var adapter = new LowLevelToAbstractConsoleAdapter(lowLevelConsole) { Prompt = "(S) " };
+
+            adapter.ReadUntilSequenceIsOver(inputSequence);
+
+            Assert.AreEqual("(S) Hello", lowLevelConsole.ReadInLineFromTo(0, 0, 8));
+            Assert.AreEqual(9, lowLevelConsole.CursorLeft);
+
+            adapter.EraseCurrentLine();
+
+            Assert.AreEqual("(S)      ", lowLevelConsole.ReadInLineFromTo(0, 0, 8));
+            Assert.AreEqual(4, lowLevelConsole.CursorLeft);
+        }
     }
 }
