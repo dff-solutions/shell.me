@@ -41,6 +41,8 @@ namespace ShellMe.CommandLine
             //then split them again the way we want it.
             args = splitCommand(string.Concat(args.Select(fragment => " " + fragment)));
 
+            WriteGreeting();
+
             if (args.Contains("-debug"))
             {
                 Console.WriteLine("Attach a debugger and hit any key to continue");
@@ -69,8 +71,6 @@ namespace ShellMe.CommandLine
 
             while (!nonInteractive && !exit)
             {
-                Console.WriteLine("Enter command, use [list commands] or type [exit] to close");
-
                 if (!nonInteractive)
                 {
                     var input = Console.ReadLine();
@@ -98,6 +98,21 @@ namespace ShellMe.CommandLine
                     }
                 }
             }
+        }
+
+        private void WriteGreeting()
+        {
+            var colorResetPoint = ConsoleHelper.CreateColorResetPoint(Console);
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("Welcome to shell.me 1.2.0");
+            Console.WriteLine(" ");
+            Console.WriteLine("Fork us on github!");
+            Console.WriteLine("We are MIT licensed: github.com/dff-solutions/shell.me");
+            Console.WriteLine(" ");
+            Console.WriteLine("Enter <commandname>, use <list commands> or type <exit> to close");
+
+            Console.WriteLine("");
+            colorResetPoint();
         }
 
         private void NotifyOnUnknownCommand(string commandName)
