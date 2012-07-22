@@ -132,9 +132,6 @@ namespace ShellMe.CommandLine
                 {
                     command.InjectProperties(args);
                     traceConsole = new TraceConsole(Console, command);
-                
-                    if (command.Verbose)
-                        traceConsole.TraceEvent(TraceEventType.Verbose, 0, "Proceeding Command: " + command.Name);
 
                     if (!command.AllowParallel && !_lockingService.AcquireLock(command.Name))
                         return false;

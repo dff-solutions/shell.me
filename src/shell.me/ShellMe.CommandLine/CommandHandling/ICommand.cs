@@ -9,8 +9,6 @@ namespace ShellMe.CommandLine.CommandHandling
 
         bool NonInteractive { get; set; }
 
-        bool Verbose { get; set; }
-
         bool AllowParallel { get; set; }
 
         string Name { get; }

@@ -18,7 +18,6 @@ namespace ShellMe.CommandLine.CommandHandling
         public AbstractTraceConsole Console { get; set; }
         public bool NonInteractive { get; set; }
         public bool AllowParallel { get; set; }
-        public bool Verbose { get; set; }
         public string WriteFile { get; set; }
         public bool WriteEventLog { get; set; }
         public IEnumerable<SourceLevels> LogLevel { get; set; }
