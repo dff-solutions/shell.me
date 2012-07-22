@@ -12,13 +12,20 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
         public LowLevelToAbstractConsoleAdapter(ILowLevelConsole console)
         {
+            Prompt = "(S) ";
+            PromptColor = ConsoleColor.DarkCyan;
+            
             _console = console;
             
             //set the pointer for the current line 
             LineStart = new CursorPosition { CursorLeft = _console.CursorLeft, CursorTop = _console.CursorTop };
             LineEnd = new CursorPosition { CursorLeft = _console.CursorLeft, CursorTop = _console.CursorTop };
-            _cursorController = new CursorController(console, LineStart, LineEnd, "$");
+            _cursorController = new CursorController(console, LineStart, LineEnd);
         }
+
+        public string Prompt { get; set; }
+
+        public ConsoleColor PromptColor { get; set; }
 
         public override string ReadLine()
         {
@@ -35,8 +42,23 @@ namespace ShellMe.CommandLine.Console.LowLevel
             return Read().KeyInfo;
         }
 
+        private void WritePromptIfNeeded()
+        {
+            if (_cursorController.IsStartOfInput() && _console.CursorLeft == 0)
+            {
+                var color = _console.ForegroundColor;
+                ForegroundColor = PromptColor;
+                Write(Prompt);
+                _console.ForegroundColor = color;
+                LineStart.CursorLeft = _console.CursorLeft;
+                LineEnd.CursorLeft = _console.CursorLeft;
+            }
+        }
+
         private ReadInfo Read()
         {
+            WritePromptIfNeeded();
+
             var keyInfo = _console.Read();
 
             if (keyInfo.Key == ConsoleKey.Backspace)
@@ -66,7 +88,7 @@ namespace ShellMe.CommandLine.Console.LowLevel
             else if (keyInfo.Key == ConsoleKey.Enter)
             {
                 var inputText = CurrentInput;
-                _cursorController.MoveCursorToStartOfNewLine(false);
+                _cursorController.MoveCursorToStartOfNewLine();
                 return new ReadInfo {IsNewLine = true, KeyInfo = keyInfo, Text = inputText};
             }
             else if (keyInfo.IsPrintable())
@@ -117,7 +139,7 @@ namespace ShellMe.CommandLine.Console.LowLevel
         public override void WriteLine(string text)
         {
             Write(text);
-            _cursorController.MoveCursorToStartOfNewLine(true);
+            _cursorController.MoveCursorToStartOfNewLine();
         }
 
         private IEnumerable<char> ReadFromCursorToEndOfInput()
@@ -173,16 +195,12 @@ namespace ShellMe.CommandLine.Console.LowLevel
         private readonly ILowLevelConsole _console;
         private readonly CursorPosition _lineStart;
         private readonly CursorPosition _lineEnd;
-        private readonly string _prompt;
-        private int _promptLength;
 
-        public CursorController(ILowLevelConsole console, CursorPosition lineStart, CursorPosition lineEnd, string prompt)
+        public CursorController(ILowLevelConsole console, CursorPosition lineStart, CursorPosition lineEnd)
         {
             _console = console;
             _lineStart = lineStart;
             _lineEnd = lineEnd;
-            _prompt = prompt;
-            _promptLength = prompt.Length;
         }
 
         public Action CreateCursorReturnPoint()
@@ -218,13 +236,10 @@ namespace ShellMe.CommandLine.Console.LowLevel
             }
         }
 
-        public void MoveCursorToStartOfNewLine(bool writePrompt)
+        public void MoveCursorToStartOfNewLine()
         {
             _console.CursorTop = _lineEnd.CursorTop + 1;
             _console.CursorLeft = 0;
-
-            if (writePrompt)
-                _prompt.ToCharArray().ToList().ForEach(c => _console.WriteAtCursorAndMove(c));
 
             _lineStart.CursorLeft = _console.CursorLeft;
             _lineStart.CursorTop = _console.CursorTop;
@@ -234,6 +249,9 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
         public bool IsStartOfInput()
         {
+
+            //_console.CursorLeft == 0 && _console.CursorLeft == LineStart.CursorLeft && _console.CursorTop == LineStart.CursorTop
+
             return _console.CursorLeft == _lineStart.CursorLeft && _console.CursorTop == _lineStart.CursorTop;
         }
 

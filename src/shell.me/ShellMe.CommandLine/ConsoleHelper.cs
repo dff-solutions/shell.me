@@ -20,10 +20,16 @@ namespace ShellMe.CommandLine
 
         public static void WriteAndResetColor(ConsoleColor color, AbstractConsole console, string text)
         {
-            var currentColor = console.ForegroundColor;
+            var resetPoint = CreateColorResetPoint(console);
             console.ForegroundColor = color;
             console.WriteLine(text);
-            console.ForegroundColor = currentColor;
+            resetPoint();
+        }
+
+        public static Action CreateColorResetPoint(AbstractConsole console)
+        {
+            var currentColor = console.ForegroundColor;
+            return () => console.ForegroundColor = currentColor;
         }
     }
 }
