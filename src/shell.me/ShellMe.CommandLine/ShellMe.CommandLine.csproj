@@ -67,6 +67,8 @@
     <Compile Include="CommandHandling\ITraceableCommand.cs" />
     <Compile Include="Console\AbstractTraceConsole.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="History\IConsoleHistory.cs" />
+    <Compile Include="History\InMemoryHistory.cs" />
     <Compile Include="Locking\FileBasedLockingService.cs" />
     <Compile Include="Locking\ILockingService.cs" />
     <Compile Include="Console\NativeConsoleWrapper.cs" />

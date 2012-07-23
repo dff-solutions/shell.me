@@ -6,6 +6,7 @@ using System.Text;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.CommandLine.Console;
 using ShellMe.CommandLine.Console.LowLevel;
+using ShellMe.CommandLine.History;
 using ShellMe.CommandLine.Locking;
 using ShellMe.CommandLine.Extensions;
 using System.Reactive.Linq;
@@ -16,6 +17,7 @@ namespace ShellMe.CommandLine
     {
         private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
+        private InMemoryHistory _history;
 
         public CommandLoop() : this(new LowLevelToAbstractConsoleAdapter(new LowLevelNativeConsole()))
         {}
@@ -30,18 +32,34 @@ namespace ShellMe.CommandLine
             _commandFactory = commandFactory;
             _lockingService = new FileBasedLockingService();
 
+            _history = new InMemoryHistory();
+
             var adapter = console as LowLevelToAbstractConsoleAdapter;
             if (adapter != null)
-                DoCrazyThings(adapter);
+                InitializeHistory(adapter);
         }
 
-        private void DoCrazyThings(LowLevelToAbstractConsoleAdapter adapter)
+        private void InitializeHistory(LowLevelToAbstractConsoleAdapter adapter)
         {
+            var keyMap = new Dictionary<ConsoleKey, Func<HistoryEntry>>
+                             {
+                                 { ConsoleKey.UpArrow, () => _history.GetNextEntry() },
+                                 { ConsoleKey.DownArrow, () => _history.GetPreviousEntry() }
+                             };
+
             adapter.KeyStrokes
-                .Where(keyInfo => keyInfo.Key == ConsoleKey.UpArrow)
-                .Subscribe(_ =>
+                .Select(keyInfo => keyInfo.Key)
+                .Where(key => key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
+                .Select(key => keyMap[key])
+                .Subscribe(func =>
                                {
                                    adapter.EraseCurrentLine();
+                                   var historyEntry = func();
+
+                                   if (historyEntry != null)
+                                   {
+                                       adapter.Write(historyEntry.Value);
+                                   }
                                });
         }
 
@@ -89,6 +107,8 @@ namespace ShellMe.CommandLine
                 if (!nonInteractive)
                 {
                     var input = Console.ReadLine().Trim();
+                   _history.Add(input);
+                    _history.ResetHistoryMarker();
 
                     if (!string.IsNullOrEmpty(input))
                     {
