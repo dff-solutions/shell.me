@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ShellMe.CommandLine.History
 {
     public class InMemoryHistory : IConsoleHistory
     {
-        private readonly List<string> _history;
+        protected List<string> History { get; private set; }
         private int _currentIndex;
 
-        public InMemoryHistory()
+        public InMemoryHistory() :this(new List<string>())
         {
-            _history = new List<string>();
-            _currentIndex = -1;
         }
         
-        public void Add(string entry)
+        protected InMemoryHistory(List<string> history)
         {
-            _history.Insert(0, entry);
+            History = history;
+            _currentIndex = -1;
+        }
+
+        public virtual void Add(string entry)
+        {
+            History.Insert(0, entry);
         }
 
         public HistoryEntry GetNextEntry()
@@ -34,12 +36,12 @@ namespace ShellMe.CommandLine.History
 
         private int GetHighestIndex()
         {
-            return _history.Count - 1;
+            return History.Count - 1;
         }
 
         private int GetLowestIndex()
         {
-            return _history.Count > 0 ? 0 : -1;
+            return History.Count > 0 ? 0 : -1;
         }
 
         public HistoryEntry GetPreviousEntry()
@@ -55,7 +57,7 @@ namespace ShellMe.CommandLine.History
 
         private HistoryEntry ReturnAtIndex(int index)
         {
-            return new HistoryEntry(_history[index], index, false);
+            return new HistoryEntry(History[index], index, false);
         }
 
         public void ResetHistoryMarker()
@@ -65,15 +67,15 @@ namespace ShellMe.CommandLine.History
 
         public void Delete(HistoryEntry entry)
         {
-            if (_history.ElementAtOrDefault(entry.Index) != null)
+            if (History.ElementAtOrDefault(entry.Index) != null)
             {
-                _history.RemoveAt(entry.Index);
+                History.RemoveAt(entry.Index);
             }
         }
 
         public void DeleteEntireHistory()
         {
-            _history.Clear();
+            History.Clear();
         }
     }
 }

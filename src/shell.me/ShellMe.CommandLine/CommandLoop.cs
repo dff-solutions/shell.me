@@ -32,7 +32,7 @@ namespace ShellMe.CommandLine
             _commandFactory = commandFactory;
             _lockingService = new FileBasedLockingService();
 
-            _history = new InMemoryHistory();
+            _history = new FileBasedHistory();
 
             var adapter = console as LowLevelToAbstractConsoleAdapter;
             if (adapter != null)
