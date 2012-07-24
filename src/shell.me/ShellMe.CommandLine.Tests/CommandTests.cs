@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ShellMe.CommandLine.CommandHandling;
+using ShellMe.CommandLine.Console.LowLevel;
 using ShellMe.Testing;
 
 namespace ShellMe.CommandLine.Tests
@@ -15,111 +16,113 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void CanInitializeCommand()
         {
-            var console = new TestConsole(new List<string>() {});
+
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--non-interactive" });
 
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[7]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(7, 0,23));
         }
 
         [Test]
         public void RunningUnknownCommandsDoesNotThrowException()
         {
-            var console = new TestConsole(new List<string>() {"--test", "exit" });
-            //var commandFactory = new CommandFactory(new[] {new TestCommand()});
+            var inputSequence = "fooooo".ToInputSequence().AddEnterHit().AddInputSequence("exit").AddEnterHit();
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
 
             var commandLoop = new CommandLoop(console, commandFactory);
-            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "--test" }));
+            Assert.DoesNotThrow(() => commandLoop.Start(new[] { "fooo" }));
         }
 
         [Test]
         public void MaliciousCommandWontTakeShellMeDown()
         {
-            var console = new TestConsole(new List<string>(){"exit"});
+            var inputSequence = "exit".ToInputSequence().AddEnterHit();
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
 
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] {"malicious", " --value=4", "--non-interactive"});
-            Assert.True(console.OutputQueue[7].StartsWith("Unexpected error happended while proceeding the command: Malicious"));
-            
+            Assert.AreEqual("Unexpected error happended while proceeding the command: Malicious", console.ReadInLineFromTo(7, 0, 65));
         }
 
         [Test]
         public void SwitchesToInteractiveModeIfStartedWithoutAnyCommand()
         {
-            var console = new TestConsole(new List<string>() { "test --nonInteractive" });
+            var inputSequence = "test --nonInteractive".ToInputSequence().AddEnterHit();
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[7]);
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(8, 0, 23));
         }
 
         [Test]
         public void InterpretsBooleanArgumentWithoutAssignmentAsTrue()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest", "--nonInteractive" });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: True, Text: "));
+            Assert.AreEqual("Run. Test: True, Text: ", console.ReadInLineFromTo(7, 0, 22));
         }
 
         [Test]
         public void InterpretsBooleanArgumentWithFalseAssignmentExpression()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false", "--nonInteractive" });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: False, Text: "));
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(7, 0, 23));
         }
 
         [Test]
         public void InterpretsStringArgumentAssignment()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest = false ", "--Text=Foo", "--non-interactive" });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Run. Test: False, Text: Foo"));
+            Assert.AreEqual("Run. Test: False, Text: Foo", console.ReadInLineFromTo(7, 0, 26));
         }
 
         [Test]
         public void InterpretsIntArgumentAssignment()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "IntProperty", "--Size = 5 ", "--nonInteractive" });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "5"));
+            Assert.AreEqual("5", console.ReadInLineFromTo(7, 0, 0));
         }
 
         [Test]
         public void InterpretsEnumerableIntArgumentAssignment()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "EnumerableInt", "--Values = [1,2, 3,4] ", "--nonInteractive" });
 
-            Assert.AreEqual("1", console.OutputQueue[7]);
-            Assert.AreEqual("2", console.OutputQueue[8]);
-            Assert.AreEqual("3", console.OutputQueue[9]);
-            Assert.AreEqual("4", console.OutputQueue[10]);
+            Assert.AreEqual("1", console.ReadInLineFromTo(7, 0, 0));
+            Assert.AreEqual("2", console.ReadInLineFromTo(8, 0, 0));
+            Assert.AreEqual("3", console.ReadInLineFromTo(9, 0, 0));
+            Assert.AreEqual("4", console.ReadInLineFromTo(10, 0, 0));
         }
 
         [Test]
         public void IgnoresUnsupportedPropertyTypes()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             Assert.DoesNotThrow(() => commandLoop.Start(new[] { "UnknownProperty", "--Size = {X: 5, Y: 10 } ", "--nonInteractive" }));
@@ -128,48 +131,55 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void RunsTwoTimesInteractiveAndThenClosesAfterLastNonInteractive()
         {
-            var console = new TestConsole(new List<string>() { "test", "test --nonInteractive" });
+            var inputSequence = "test".ToInputSequence().AddEnterHit().AddInputSequence("test --nonInteractive").AddEnterHit();
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[7]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[8]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[9]);
-            Assert.AreEqual(10, console.OutputQueue.Count);
+            Assert.AreEqual("Run. Test: True, Text: ", console.ReadInLineFromTo(7, 0, 22));
+            Assert.AreEqual("(S) test", console.ReadInLineFromTo(8, 0, 7));
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(9, 0, 23));
+            Assert.AreEqual("(S) test --nonInteractive", console.ReadInLineFromTo(10, 0, 24));
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(11, 0, 23));
+            Assert.AreEqual(12, console.BufferLines);
         }
 
         [Test]
-        public void RunsTwoTimesInteractiveAndThenIgnoresLastCommandBecauseOfPreviousExit()
+        public void RunsTwoTimesAndThenIgnoresLastCommandBecauseOfPreviousExit()
         {
-            var console = new TestConsole(new List<string>() { "test", "exit", "--test" });
+            var inputSequence = "test".ToInputSequence().AddEnterHit().AddInputSequence("exit").AddEnterHit().AddInputSequence("test").AddEnterHit();
+
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "test", "--IsTest" });
 
-            Assert.AreEqual("Run. Test: True, Text: ", console.OutputQueue[7]);
-            Assert.AreEqual("Run. Test: False, Text: ", console.OutputQueue[8]);
-            Assert.AreEqual(9, console.OutputQueue.Count);
+            Assert.AreEqual("Run. Test: True, Text: ", console.ReadInLineFromTo(7, 0, 22));
+            Assert.AreEqual("(S) test", console.ReadInLineFromTo(8, 0, 7));
+            Assert.AreEqual("Run. Test: False, Text: ", console.ReadInLineFromTo(9, 0, 23));
+            Assert.AreEqual("(S) exit", console.ReadInLineFromTo(10, 0, 7));
+            Assert.AreEqual(11, console.BufferLines);
         }
 
         [Test]
         public void PrintsExceptionsToTheConsole()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "RaiseException", "--nonInteractive" });
-            Assert.IsTrue(console.OutputQueue[7].StartsWith("Unexpected error happended while proceeding the command: RaiseException"));
+            Assert.AreEqual("Unexpected error happended while proceeding the command: RaiseException", console.ReadInLineFromTo(7, 0, 70));
         }
 
         [Test]
         public void IgnoresSecondCommandBecauseItsConfiguredToNotRunInParallel()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
-            var console2 = new TestConsole(new List<string>());
+            var console2 = new LowLevelTestConsole();
             var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
@@ -180,8 +190,8 @@ namespace ShellMe.CommandLine.Tests
                              });
 
             var successfulRuns = 0;
-            var firstCommandRun = console.OutputQueue.Exists(x => x == "Completed");
-            var secondCommandRun = console2.OutputQueue.Exists(x => x == "Completed");
+            var firstCommandRun = console.BufferLines == 8 && console.ReadInLineFromTo(7,0,8) == "Completed";
+            var secondCommandRun = console2.BufferLines == 8 && console2.ReadInLineFromTo(7, 0, 8) == "Completed";
 
             if (firstCommandRun)
                 successfulRuns++;
@@ -195,11 +205,11 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void RunsCommandsInParallel()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
-            var console2 = new TestConsole(new List<string>());
+            var console2 = new LowLevelTestConsole();
             var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
@@ -209,18 +219,18 @@ namespace ShellMe.CommandLine.Tests
                                  Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive", "--allow-parallel=true" }))
                              });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Completed"));
-            Assert.IsTrue(console2.OutputQueue.Exists(x => x == "Completed"));
+            Assert.IsTrue(console.ReadInLineFromTo(7, 0, 8) == "Completed");
+            Assert.IsTrue(console2.ReadInLineFromTo(7, 0, 8) == "Completed");
         }
 
         [Test]
         public void RunsCommandsInParallelBecauseAllowParallelIsDefaultedToTrue()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
 
-            var console2 = new TestConsole(new List<string>());
+            var console2 = new LowLevelTestConsole();
             var commandFactory2 = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop2 = new CommandLoop(console2, commandFactory2);
 
@@ -230,8 +240,8 @@ namespace ShellMe.CommandLine.Tests
                                  Task.Factory.StartNew(() => commandLoop2.Start(new[] { "LongRunningCommand", "--nonInteractive" }))
                              });
 
-            Assert.IsTrue(console.OutputQueue.Exists(x => x == "Completed"));
-            Assert.IsTrue(console2.OutputQueue.Exists(x => x == "Completed"));
+            Assert.IsTrue(console.ReadInLineFromTo(7, 0, 8) == "Completed");
+            Assert.IsTrue(console2.ReadInLineFromTo(7, 0, 8) == "Completed");
         }
     }
 }
