@@ -108,6 +108,14 @@ namespace ShellMe.Testing
             _buffer.Add(Enumerable.Repeat((char?)' ',MaxColumn + 1).ToList());
         }
 
+        private void AddLinesToBuffer(int lines)
+        {
+            for (int i = 0; i < lines; i++)
+            {
+                AddLineToBuffer();
+            }
+        }
+
         public int MaxColumn { get; private set; }
 
         public ConsoleColor ForegroundColor { get; set; }
@@ -122,12 +130,21 @@ namespace ShellMe.Testing
         }
 
         public void WriteAtCursorAndMove(char key)
-        {   
+        {
+            //There is no other way to calculate when to insert a line.
+            //That's because if the higher level code writes Console.WriteLine("")
+            //This method will never get called. This results in an offset where we need
+            //to insert several missing lines at once
+
+            var currentMaxCursor = _buffer.Count - 1;
+            var missingLines = CursorTop - currentMaxCursor;
+            if (missingLines > 0)
+                AddLinesToBuffer(missingLines);
+
             _buffer[CursorTop][CursorLeft] = key;
 
             if (CursorLeft == (MaxColumn - 1))
             {
-                AddLineToBuffer();
                 CursorLeft = 0;
                 CursorTop++;
             }
