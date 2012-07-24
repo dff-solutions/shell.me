@@ -22,7 +22,7 @@ namespace ShellMe.CommandLine
         public CommandLoop(): this(new Configuration())
         {}
 
-        //Todo: Throw these three constructors away once we finished porting the rest of the code over to the configuration object
+        //Todo: Throw these four constructors away once we finished porting the rest of the code over to the configuration object
         public CommandLoop(ILowLevelConsole console) : this(console, new CommandFactory())
         {
         }
