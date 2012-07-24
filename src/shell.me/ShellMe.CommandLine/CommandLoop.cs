@@ -19,21 +19,16 @@ namespace ShellMe.CommandLine
         private readonly ILockingService _lockingService;
         private readonly InMemoryHistory _history;
 
-        public CommandLoop() : this(new LowLevelToAbstractConsoleAdapter(new LowLevelNativeConsole()))
+        public CommandLoop(): this(new LowLevelNativeConsole())
         {}
 
-        public CommandLoop(AbstractConsole console) : this(console, new CommandFactory())
+        public CommandLoop(ILowLevelConsole console) : this(console, new CommandFactory())
         {
         }
 
         public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory)
-            : this(new LowLevelToAbstractConsoleAdapter(console), commandFactory)
         {
-        }
-
-        public CommandLoop(AbstractConsole console, ICommandFactory commandFactory)
-        {
-            Console = console;
+            Console = new LowLevelToAbstractConsoleAdapter(console);
             _commandFactory = commandFactory;
             _lockingService = new FileBasedLockingService();
 
