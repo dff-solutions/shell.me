@@ -62,7 +62,7 @@ namespace ShellMe.CommandLine
                                });
         }
 
-        private AbstractConsole Console { get; set; }
+        protected AbstractConsole Console { get; set; }
 
         public void Start(string[] args)
         {
@@ -139,7 +139,7 @@ namespace ShellMe.CommandLine
             }
         }
 
-        private void WriteGreeting()
+        protected virtual void WriteGreeting()
         {
             var colorResetPoint = ConsoleHelper.CreateColorResetPoint(Console);
             Console.ForegroundColor = ConsoleColor.DarkCyan;
@@ -154,7 +154,7 @@ namespace ShellMe.CommandLine
             colorResetPoint();
         }
 
-        private void NotifyOnUnknownCommand(string commandName)
+        protected virtual void NotifyOnUnknownCommand(string commandName)
         {
             if (!string.IsNullOrEmpty(commandName))
             {
