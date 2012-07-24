@@ -28,15 +28,14 @@ namespace ShellMe.CommandLine
 
         public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory)
         {
-            Console = new LowLevelToAbstractConsoleAdapter(console);
+            var adapter = new LowLevelToAbstractConsoleAdapter(console);
+            Console = adapter;
             _commandFactory = commandFactory;
             _lockingService = new FileBasedLockingService();
 
             _history = new FileBasedHistory();
 
-            var adapter = console as LowLevelToAbstractConsoleAdapter;
-            if (adapter != null)
-                InitializeHistory(adapter);
+            InitializeHistory(adapter);
         }
 
         private void InitializeHistory(LowLevelToAbstractConsoleAdapter adapter)
