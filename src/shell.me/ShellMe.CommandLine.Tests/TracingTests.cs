@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using ShellMe.CommandLine.CommandHandling;
 using ShellMe.Testing;
+using ShellMe.CommandLine.Console.LowLevel;
 
 namespace ShellMe.CommandLine.Tests
 {
@@ -12,37 +13,39 @@ namespace ShellMe.CommandLine.Tests
         [Test]
         public void InterpretsEnumerableLogLevelArgumentAssignment()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel = [Warning,Information] ", "--nonInteractive" });
 
-            Assert.AreEqual("Warning", console.OutputQueue[7]);
-            Assert.AreEqual("Information", console.OutputQueue[8]);
+            Assert.AreEqual("Warning", console.ReadInLineFromTo(7,0,6));
+            Assert.AreEqual("Information", console.ReadInLineFromTo(8, 0, 10));
         }
 
         [Test]
         public void InterpretsEnumerableLogLevelArgumentAssignment2()
         {
-            var console = new TestConsole(new List<string>());
+            var console = new LowLevelTestConsole();
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new[] { "LogLevel", "--LogLevel=[Information, Error]", "--nonInteractive" });
 
-            Assert.AreEqual("Information", console.OutputQueue[7]);
-            Assert.AreEqual("Error", console.OutputQueue[8]);
+            Assert.AreEqual("Information", console.ReadInLineFromTo(7, 0, 10));
+            Assert.AreEqual("Error", console.ReadInLineFromTo(8, 0, 4));
         }
 
         [Test]
         public void InterpretsEnumerableLogLevelArgumentInInteractiveMode()
         {
-            var console = new TestConsole(new List<string>(){"LogLevel --logLevel=[Information, Error] --non-interactive"});
+            var inputSequence = "LogLevel --logLevel=[Information, Error] --non-interactive".ToInputSequence().AddEnterHit();
+            var console = new LowLevelTestConsole(inputSequence);
             var commandFactory = new CommandFactory(Configurations.PluginDirectory);
             var commandLoop = new CommandLoop(console, commandFactory);
             commandLoop.Start(new string[]{});
 
-            Assert.AreEqual("Information", console.OutputQueue[7]);
-            Assert.AreEqual("Error", console.OutputQueue[8]);
+            Assert.AreEqual("(S) LogLevel --logLevel=[Information, Error] --non-interactive", console.ReadInLineFromTo(7, 0, 61));
+            Assert.AreEqual("Information", console.ReadInLineFromTo(8, 0, 10));
+            Assert.AreEqual("Error", console.ReadInLineFromTo(9, 0, 4));
         }
 
         //[Test]
