@@ -113,6 +113,11 @@ namespace ShellMe.CommandLine
                     {
                         if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                             exit = true;
+                        else if(input.Equals("clear history", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _history.DeleteEntireHistory();
+                            ConsoleHelper.WriteLineInGreen(Console,"Deleted all history entries");
+                        }
                         else if(input.Equals("list commands", StringComparison.OrdinalIgnoreCase))
                         {
                             _commandFactory.GetAvailable().ForEach(c => ConsoleHelper.WriteLineInGreen(Console, c.Name));
