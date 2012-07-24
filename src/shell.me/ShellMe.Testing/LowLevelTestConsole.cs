@@ -30,6 +30,12 @@ namespace ShellMe.Testing
                                            return new ConsoleKeyInfo('+', ConsoleKey.OemPlus, false, false, false);
                                        if (c == '!')
                                            return new ConsoleKeyInfo('!', ConsoleKey.D1, true, false, false);
+                                       if (c == '=')
+                                           return new ConsoleKeyInfo('=', ConsoleKey.D0, true, false, false);
+                                       if (c == '[')
+                                           return new ConsoleKeyInfo('[', ConsoleKey.D8, false, true, false);
+                                       if (c == ']')
+                                           return new ConsoleKeyInfo(']', ConsoleKey.D9, false, true, false);
 
                                        return (ConsoleKeyInfo?) null;
                                    })
