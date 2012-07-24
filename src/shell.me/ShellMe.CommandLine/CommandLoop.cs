@@ -17,12 +17,17 @@ namespace ShellMe.CommandLine
     {
         private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
-        private InMemoryHistory _history;
+        private readonly InMemoryHistory _history;
 
         public CommandLoop() : this(new LowLevelToAbstractConsoleAdapter(new LowLevelNativeConsole()))
         {}
 
         public CommandLoop(AbstractConsole console) : this(console, new CommandFactory())
+        {
+        }
+
+        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory)
+            : this(new LowLevelToAbstractConsoleAdapter(console), commandFactory)
         {
         }
 
