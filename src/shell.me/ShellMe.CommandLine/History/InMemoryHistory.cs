@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ShellMe.CommandLine.Extensions;
 
 namespace ShellMe.CommandLine.History
 {
     public class InMemoryHistory : IConsoleHistory
     {
-        protected List<string> History { get; private set; }
         private int _currentIndex;
 
         public InMemoryHistory() :this(new List<string>())
@@ -14,13 +14,19 @@ namespace ShellMe.CommandLine.History
         
         protected InMemoryHistory(List<string> history)
         {
+            MaxElements = 100;
             History = history;
             _currentIndex = -1;
         }
 
+        public int MaxElements { get; set; }
+
+        protected List<string> History { get; private set; }
+
         public virtual void Add(string entry)
         {
             History.Insert(0, entry);
+            RestrictToMaxSize();
         }
 
         public HistoryEntry GetNextEntry()
@@ -76,6 +82,17 @@ namespace ShellMe.CommandLine.History
         public void DeleteEntireHistory()
         {
             History.Clear();
+        }
+
+        protected void RestrictToMaxSize()
+        {
+            if(History.Count > MaxElements)
+            {
+                History
+                    .ToList()
+                    .Skip(MaxElements)
+                    .ForEach(entry => History.Remove(entry));
+            }
         }
     }
 }

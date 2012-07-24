@@ -18,6 +18,7 @@ namespace ShellMe.CommandLine.History
         void Delete(HistoryEntry entry);
 
         void DeleteEntireHistory();
+        int MaxElements { get; set; }
     }
 
     public class HistoryEntry

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using ShellMe.CommandLine.Extensions;
 
 namespace ShellMe.CommandLine.History
 {
@@ -16,6 +17,7 @@ namespace ShellMe.CommandLine.History
         public FileBasedHistory(string fileName) :base(GetHistoryFromFile(fileName))
         {
             _fileName = fileName;
+            MaxElements = 100;
         }
 
         public override void Add(string entry)
