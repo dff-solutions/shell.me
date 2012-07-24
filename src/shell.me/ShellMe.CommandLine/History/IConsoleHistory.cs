@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ShellMe.CommandLine.History
 {
-    interface IConsoleHistory
+    public interface IConsoleHistory
     {
         void Add(string entry);
 

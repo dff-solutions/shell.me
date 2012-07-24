@@ -2,7 +2,7 @@
 
 namespace ShellMe.CommandLine.Locking
 {
-    internal interface ILockingService
+    public interface ILockingService
     {
         bool AcquireLock(string resource);
         void ReleaseLock(string resource);

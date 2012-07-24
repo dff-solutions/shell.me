@@ -17,7 +17,7 @@ namespace ShellMe.CommandLine
     {
         private readonly ICommandFactory _commandFactory;
         private readonly ILockingService _lockingService;
-        private readonly InMemoryHistory _history;
+        private readonly IConsoleHistory _history;
 
         public CommandLoop(): this(new LowLevelNativeConsole())
         {}
@@ -26,15 +26,21 @@ namespace ShellMe.CommandLine
         {
         }
 
-        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory)
+        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory):this(console, commandFactory, new FileBasedLockingService())
+        {
+        }
+
+        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory, ILockingService lockingService):this(console, commandFactory, lockingService, new FileBasedHistory())
+        {
+        }
+
+        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory, ILockingService lockingService, IConsoleHistory consoleHistory)
         {
             var adapter = new LowLevelToAbstractConsoleAdapter(console);
             Console = adapter;
             _commandFactory = commandFactory;
-            _lockingService = new FileBasedLockingService();
-
-            _history = new FileBasedHistory();
-
+            _lockingService = lockingService;
+            _history = consoleHistory;
             InitializeHistory(adapter);
         }
 
