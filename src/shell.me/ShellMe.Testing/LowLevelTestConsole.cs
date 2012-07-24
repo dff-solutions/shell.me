@@ -116,6 +116,11 @@ namespace ShellMe.Testing
             }
         }
 
+        public int BufferLines
+        {
+            get { return _buffer.Count; }
+        }
+
         public int MaxColumn { get; private set; }
 
         public ConsoleColor ForegroundColor { get; set; }
