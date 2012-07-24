@@ -55,6 +55,7 @@
     <Compile Include="CommandHandling\CommandFactory.cs" />
     <Compile Include="CommandHandling\ICommand.cs" />
     <Compile Include="CommandHandling\CommandPropertyWalker.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="Console\LowLevel\LowLevelConsoleMixIn.cs" />
     <Compile Include="Console\LowLevel\LowLevelToAbstractConsoleAdapter.cs" />

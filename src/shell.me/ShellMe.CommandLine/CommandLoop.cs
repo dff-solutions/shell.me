@@ -19,9 +19,10 @@ namespace ShellMe.CommandLine
         private readonly ILockingService _lockingService;
         private readonly IConsoleHistory _history;
 
-        public CommandLoop(): this(new LowLevelNativeConsole())
+        public CommandLoop(): this(new Configuration())
         {}
 
+        //Todo: Throw these three constructors away once we finished porting the rest of the code over to the configuration object
         public CommandLoop(ILowLevelConsole console) : this(console, new CommandFactory())
         {
         }
@@ -34,13 +35,24 @@ namespace ShellMe.CommandLine
         {
         }
 
-        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory, ILockingService lockingService, IConsoleHistory consoleHistory)
+        public CommandLoop(ILowLevelConsole console, ICommandFactory commandFactory, ILockingService lockingService, IConsoleHistory consoleHistory):
+            this(
+            new Configuration()
+            .UseConsole(console)
+            .UseCommandFactory(commandFactory)
+            .UseLockingService(lockingService)
+            .UseConsoleHistory(consoleHistory)
+            )
         {
-            var adapter = new LowLevelToAbstractConsoleAdapter(console);
+        }
+
+        public CommandLoop(Configuration configuration)
+        {
+            var adapter = new LowLevelToAbstractConsoleAdapter(configuration.Console);
             Console = adapter;
-            _commandFactory = commandFactory;
-            _lockingService = lockingService;
-            _history = consoleHistory;
+            _commandFactory = configuration.CommandFactory;
+            _lockingService = configuration.LockingService;
+            _history = configuration.ConsoleHistory;
             InitializeHistory(adapter);
         }
 
