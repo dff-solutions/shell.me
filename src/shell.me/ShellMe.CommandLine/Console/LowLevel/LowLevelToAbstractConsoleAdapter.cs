@@ -78,6 +78,23 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
                 OnBackspaceHit();
             }
+            else if(keyInfo.Key == ConsoleKey.Delete)
+            {
+                if (_cursorController.IsEndOfInput())
+                    return new ReadInfo { KeyInfo = keyInfo };
+
+                OnDeleteHit();
+            }
+            else if(keyInfo.Key == ConsoleKey.Home)
+            {
+                if(!_cursorController.IsStartOfInput())
+                    _cursorController.MoveCursorToHome();
+            }
+            else if( keyInfo.Key == ConsoleKey.End)
+            {
+                if(!_cursorController.IsEndOfInput())
+                    _cursorController.MoveCursorToEnd();
+            }
             else if (keyInfo.Key == ConsoleKey.LeftArrow)
             {
                 if (!_cursorController.IsStartOfInput())
@@ -123,6 +140,21 @@ namespace ShellMe.CommandLine.Console.LowLevel
             Write(textAfterInput, false);
             returnPoint();
             _cursorController.MoveLineMarkerBackward();
+        }
+
+        private void OnDeleteHit()
+        {
+            var textAfterInput = ReadFromCursorToEndOfInput();
+            _console.WriteAtCursorAndMove(' ');
+            _cursorController.MoveCursorBackward();
+            var returnPoint = _cursorController.CreateCursorReturnPoint();
+            
+            returnPoint();
+            Write(textAfterInput
+                    .Skip(1), false);
+
+            returnPoint();
+            _cursorController.MoveLineMarkerForward();
         }
 
         public override ConsoleColor ForegroundColor
@@ -283,6 +315,18 @@ namespace ShellMe.CommandLine.Console.LowLevel
             _lineStart.CursorTop = _console.CursorTop;
             _lineEnd.CursorLeft = _console.CursorLeft;
             _lineEnd.CursorTop = _console.CursorTop;
+        }
+
+        public void MoveCursorToHome()
+        {
+            _console.CursorTop = _lineStart.CursorTop;
+            _console.CursorLeft = _lineStart.CursorLeft;
+        }
+
+        public void MoveCursorToEnd()
+        {
+            _console.CursorTop = _lineEnd.CursorTop;
+            _console.CursorLeft = _lineEnd.CursorLeft;
         }
 
         public bool IsStartOfInput()
