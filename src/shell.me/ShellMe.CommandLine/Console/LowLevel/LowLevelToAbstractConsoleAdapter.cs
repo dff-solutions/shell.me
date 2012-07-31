@@ -144,17 +144,13 @@ namespace ShellMe.CommandLine.Console.LowLevel
 
         private void OnDeleteHit()
         {
-            var textAfterInput = ReadFromCursorToEndOfInput();
-            _console.WriteAtCursorAndMove(' ');
-            _cursorController.MoveCursorBackward();
             var returnPoint = _cursorController.CreateCursorReturnPoint();
-            
+            _console.WriteAtCursorAndMove(' ');
+            var textAfterInput = ReadFromCursorToEndOfInput();
             returnPoint();
-            Write(textAfterInput
-                    .Skip(1), false);
-
+            Write(textAfterInput, false);
             returnPoint();
-            _cursorController.MoveLineMarkerForward();
+            _cursorController.MoveLineMarkerBackward();
         }
 
         public override ConsoleColor ForegroundColor
