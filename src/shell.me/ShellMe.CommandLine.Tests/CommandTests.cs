@@ -120,6 +120,19 @@ namespace ShellMe.CommandLine.Tests
         }
 
         [Test]
+        public void InterpretsEnumerableStringArgumentAssignment()
+        {
+            var console = new LowLevelTestConsole();
+            var commandFactory = new CommandFactory(Configurations.PluginDirectory);
+            var commandLoop = new CommandLoop(console, commandFactory);
+            commandLoop.Start(new[] { "EnumerableString", "--Values = [Foo,bar,Foo Bar] ", "--nonInteractive" });
+
+            Assert.AreEqual("Foo", console.ReadInLineFromTo(7, 0, 2));
+            Assert.AreEqual("bar", console.ReadInLineFromTo(8, 0, 2));
+            Assert.AreEqual("Foo Bar", console.ReadInLineFromTo(9, 0, 6));
+        }
+
+        [Test]
         public void IgnoresUnsupportedPropertyTypes()
         {
             var console = new LowLevelTestConsole();

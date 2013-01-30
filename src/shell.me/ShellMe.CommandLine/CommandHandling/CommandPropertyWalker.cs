@@ -40,6 +40,13 @@ namespace ShellMe.CommandLine.CommandHandling
                                                                   .Select(saveConvertToInt)
                                                                   .ToList());
 
+            TypeProviders.Add(typeof(IEnumerable<string>), arg => arg.Value
+                                                                  .Replace("[", "")
+                                                                  .Replace("]", "")
+                                                                  .Split(',')
+                                                                  .Select(x => x.ToString())
+                                                                  .ToList());
+
             TypeProviders.Add(typeof(IEnumerable<SourceLevels>), arg => arg.Value
                                                                            .Replace("[","")
                                                                            .Replace("]","")

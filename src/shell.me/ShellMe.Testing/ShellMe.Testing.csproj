@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumerableStringCommand.cs" />
     <Compile Include="ExceptionCommand.cs" />
     <Compile Include="IntPropertyCommand.cs" />
     <Compile Include="EnumerableIntCommand.cs" />
