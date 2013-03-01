@@ -69,15 +69,29 @@ namespace ShellMe.CommandLine
                 .Where(key => key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
                 .Select(key => keyMap[key])
                 .Subscribe(func =>
-                               {
-                                   adapter.EraseCurrentLine();
-                                   var historyEntry = func();
+                {
+                    adapter.EraseCurrentLine();
+                    var historyEntry = func();
 
-                                   if (historyEntry != null)
-                                   {
-                                       adapter.Write(historyEntry.Value);
-                                   }
-                               });
+                    if (historyEntry != null)
+                    {
+                        adapter.Write(historyEntry.Value);
+                    }
+                });
+
+            adapter.KeyStrokes
+                .Select(keyInfo => keyInfo.Key)
+                .Where(key => key == ConsoleKey.Tab)
+                .Subscribe(func =>
+                    {
+                        var onConsole = Console.CurrentInput;
+                        var possibleCommands =
+                            _commandFactory.GetAvailable().Where(x => x.Name.StartsWith(onConsole)).ToList();
+                        if (possibleCommands.Count() == 1)
+                        {
+                            adapter.Write(possibleCommands.First().Name);
+                        }
+                    });
         }
 
         protected AbstractConsole Console { get; set; }

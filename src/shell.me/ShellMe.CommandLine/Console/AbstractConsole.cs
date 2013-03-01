@@ -6,6 +6,7 @@ namespace ShellMe.CommandLine.Console
     {
         public abstract void WriteLine(string line);
         public abstract string ReadLine();
+        public abstract string CurrentInput { get; }
         public abstract ConsoleColor ForegroundColor { get; set; }
 
         public override object InitializeLifetimeService()

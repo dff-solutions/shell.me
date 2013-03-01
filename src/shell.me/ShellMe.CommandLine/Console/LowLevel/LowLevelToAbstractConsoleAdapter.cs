@@ -159,7 +159,7 @@ namespace ShellMe.CommandLine.Console.LowLevel
             set { _console.ForegroundColor = value; }
         }
 
-        public string CurrentInput
+        public override string CurrentInput
         {
             get
             {

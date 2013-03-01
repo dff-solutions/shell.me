@@ -14,6 +14,11 @@ namespace ShellMe.CommandLine.Console
             return System.Console.ReadLine();
         }
 
+        public override string CurrentInput
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public override ConsoleColor ForegroundColor
         {
             get { return System.Console.ForegroundColor; }

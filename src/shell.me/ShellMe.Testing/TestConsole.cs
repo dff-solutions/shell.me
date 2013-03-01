@@ -31,6 +31,11 @@ namespace ShellMe.Testing
             return first;
         }
 
+        public override string CurrentInput
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public override ConsoleColor ForegroundColor { get; set; }
     }
 }
