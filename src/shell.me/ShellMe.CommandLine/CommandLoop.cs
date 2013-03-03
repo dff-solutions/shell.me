@@ -59,42 +59,63 @@ namespace ShellMe.CommandLine
         private void InitializeHistory(LowLevelToAbstractConsoleAdapter adapter)
         {
             var keyMap = new Dictionary<ConsoleKey, Func<HistoryEntry>>
-                             {
-                                 { ConsoleKey.UpArrow, () => _history.GetNextEntry() },
-                                 { ConsoleKey.DownArrow, () => _history.GetPreviousEntry() }
-                             };
-
-            adapter.KeyStrokes
-                .Select(keyInfo => keyInfo.Key)
-                .Where(key => key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
-                .Select(key => keyMap[key])
-                .Subscribe(func =>
                 {
-                    adapter.EraseCurrentLine();
-                    var historyEntry = func();
-
-                    if (historyEntry != null)
-                    {
-                        adapter.Write(historyEntry.Value);
-                    }
-                });
+                    {ConsoleKey.UpArrow, () => _history.GetNextEntry()},
+                    {ConsoleKey.DownArrow, () => _history.GetPreviousEntry()}
+                };
 
             adapter.KeyStrokes
-                .Select(keyInfo => keyInfo.Key)
-                .Where(key => key == ConsoleKey.Tab)
-                .Subscribe(func =>
-                    {
-                        var onConsole = Console.CurrentInput;
-                        var possibleCommands =
-                            _commandFactory.GetAvailable().Select(x=>x.Name).ToList();
-                         possibleCommands.Add("list commands");
-                        possibleCommands = possibleCommands.Where(x => x.StartsWith(onConsole.Trim())).ToList();
-                        if (possibleCommands.Count() == 1)
-                        {
-                            if (possibleCommands.First().Length>onConsole.Length)
-                                adapter.Write(possibleCommands.First().Substring(onConsole.Length-1));
-                        }
-                    });
+                   .Select(keyInfo => keyInfo.Key)
+                   .Where(key => key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
+                   .Select(key => keyMap[key])
+                   .Subscribe(func =>
+                       {
+                           adapter.EraseCurrentLine();
+                           var historyEntry = func();
+
+                           if (historyEntry != null)
+                           {
+                               adapter.Write(historyEntry.Value);
+                           }
+                       });
+
+            adapter.KeyStrokes
+                   .Select(keyInfo => keyInfo.Key)
+                   .Where(key => key == ConsoleKey.Tab)
+                   .Subscribe(func =>
+                       {
+                           var onConsole = Console.CurrentInput;
+                           var possibleCommands =
+                               _commandFactory.GetAvailable().Select(x => x.Name).ToList();
+                           possibleCommands.Add("list commands");
+                           possibleCommands = possibleCommands.Where(x => x.StartsWith(onConsole.Trim())).ToList();
+                           if (possibleCommands.Count() == 1)
+                           {
+                               //Command not complete on console --> suggest command
+                               if (possibleCommands.First().Length > onConsole.Length)
+                               {
+                                   adapter.Write(possibleCommands.First().Substring(onConsole.Length - 1));
+                               }
+                           }
+                           else
+                           {
+                               Func<string, string[]> splitCommand =
+                                   input => input.Split(new[] {" -"}, StringSplitOptions.None);
+                               var tempArgs = splitCommand(onConsole);
+
+
+                               var commandName = new CommandMatcher(tempArgs).CommandName;
+                               var command = _commandFactory.GetCommand(commandName);
+
+                               if (command == null)
+                                   NotifyOnUnknownCommand(commandName);
+
+                               //Problem: GetCommandProperties gives back an empty Array! Why? - 
+                               //Has something to to with the remoting stuff... Dont know how it works 
+                               //while execting the command regularly (by hitting "enter") ???
+                               var porperties = command.GetCommandProperties();
+                           }
+                       });
         }
 
         protected AbstractConsole Console { get; set; }
