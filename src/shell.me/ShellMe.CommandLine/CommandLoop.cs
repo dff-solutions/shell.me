@@ -86,10 +86,13 @@ namespace ShellMe.CommandLine
                     {
                         var onConsole = Console.CurrentInput;
                         var possibleCommands =
-                            _commandFactory.GetAvailable().Where(x => x.Name.StartsWith(onConsole)).ToList();
+                            _commandFactory.GetAvailable().Select(x=>x.Name).ToList();
+                         possibleCommands.Add("list commands");
+                        possibleCommands = possibleCommands.Where(x => x.StartsWith(onConsole.Trim())).ToList();
                         if (possibleCommands.Count() == 1)
                         {
-                            adapter.Write(possibleCommands.First().Name);
+                            if (possibleCommands.First().Length>onConsole.Length)
+                                adapter.Write(possibleCommands.First().Substring(onConsole.Length-1));
                         }
                     });
         }
