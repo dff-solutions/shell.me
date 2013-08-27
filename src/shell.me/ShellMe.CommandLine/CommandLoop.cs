@@ -124,7 +124,9 @@ namespace ShellMe.CommandLine
                 if (!nonInteractive)
                 {
                     var input = Console.ReadLine().Trim();
-                    _history.Add(input);
+
+                    if (!string.IsNullOrEmpty(input))
+                        _history.Add(input);
                     _history.ResetHistoryMarker();
 
                     if (!string.IsNullOrEmpty(input))

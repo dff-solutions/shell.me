@@ -11,7 +11,7 @@ namespace ShellMe.CommandLine.History
         public InMemoryHistory() :this(new List<string>())
         {
         }
-        
+
         protected InMemoryHistory(List<string> history)
         {
             MaxElements = 100;
@@ -47,7 +47,7 @@ namespace ShellMe.CommandLine.History
 
         private int GetLowestIndex()
         {
-            return History.Count > 0 ? 0 : -1;
+            return History.Any() ? 0 : -1;
         }
 
         public HistoryEntry GetPreviousEntry()
