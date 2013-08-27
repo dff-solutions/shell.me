@@ -56,7 +56,22 @@ namespace ShellMe.CommandLine.Console.LowLevel
                    keyInfo.Key == ConsoleKey.Oem7 ||
                    keyInfo.Key == ConsoleKey.Oem8 ||
                    keyInfo.Key == ConsoleKey.Oem102 ||
-                   keyInfo.Key == ConsoleKey.Spacebar;
+                   keyInfo.Key == ConsoleKey.Spacebar ||
+                   keyInfo.Key == ConsoleKey.NumPad0 ||
+                   keyInfo.Key == ConsoleKey.NumPad1 ||
+                   keyInfo.Key == ConsoleKey.NumPad2 ||
+                   keyInfo.Key == ConsoleKey.NumPad3 ||
+                   keyInfo.Key == ConsoleKey.NumPad4 ||
+                   keyInfo.Key == ConsoleKey.NumPad5 ||
+                   keyInfo.Key == ConsoleKey.NumPad6 ||
+                   keyInfo.Key == ConsoleKey.NumPad7 ||
+                   keyInfo.Key == ConsoleKey.NumPad8 ||
+                   keyInfo.Key == ConsoleKey.NumPad9 ||
+                   keyInfo.Key == ConsoleKey.Multiply ||
+                   keyInfo.Key == ConsoleKey.Divide ||
+                   keyInfo.Key == ConsoleKey.Decimal ||
+                   keyInfo.Key == ConsoleKey.Add ||
+                   keyInfo.Key == ConsoleKey.Subtract;
         }
     }
 }
