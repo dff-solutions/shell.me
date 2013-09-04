@@ -126,11 +126,9 @@ namespace ShellMe.CommandLine
                     var input = Console.ReadLine().Trim();
 
                     if (!string.IsNullOrEmpty(input))
-                        _history.Add(input);
-                    _history.ResetHistoryMarker();
-
-                    if (!string.IsNullOrEmpty(input))
                     {
+                        _history.Add(input);
+
                         if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                             exit = true;
                         else if(input.Equals("clear history", StringComparison.OrdinalIgnoreCase))
@@ -147,7 +145,7 @@ namespace ShellMe.CommandLine
                             var tempArgs = splitCommand(input);
                             var commandName = new CommandMatcher(tempArgs).CommandName;
                             command = _commandFactory.GetCommand(commandName);
-                            
+
                             if (command == null)
                                 NotifyOnUnknownCommand(commandName);
 
@@ -155,6 +153,8 @@ namespace ShellMe.CommandLine
                                 nonInteractive = command.NonInteractive;
                         }
                     }
+
+                    _history.ResetHistoryMarker();
                 }
             }
         }

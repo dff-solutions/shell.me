@@ -26,7 +26,15 @@ namespace ShellMe.CommandLine.Console.LowLevel
         public int CursorTop
         {
             get { return System.Console.CursorTop; }
-            set { System.Console.CursorTop = value; }
+            set
+            {
+                var top = value > Int16.MaxValue - 2 ? Int16.MaxValue - 2 : value;
+
+                if (System.Console.BufferHeight <= top)
+                    System.Console.BufferHeight = top + 1;
+
+                System.Console.CursorTop = top;
+            }
         }
 
         public char? ValueAtCursor
